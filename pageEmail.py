@@ -67,7 +67,7 @@ class FrameEmail(QWidget):
 
         logo = QLabel(self.frame_entry)
         ico = QLabel(logo)
-        ico.setPixmap(QPixmap(r"C:\Users\farya\Desktop\AryadMoneyOriginal\projet\frames\icons\14.png").scaled(35,35))
+        ico.setPixmap(QPixmap(r"icons\14.png").scaled(35,35))
         ico.setStyleSheet("background:transparent;padding-top:8px;padding-left:7px;")
 
         logo.setFixedSize(50, 50)

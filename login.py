@@ -66,7 +66,7 @@ class Login(QWidget):
 
         logo = QLabel(self.frame_entry)
         ico = QLabel(logo)
-        ico.setPixmap(QPixmap(r"C:\Users\farya\Desktop\AryadMoneyOriginal\projet\frames\icons\16.png").scaled(40,40))
+        ico.setPixmap(QPixmap(r"icons\16.png").scaled(40,40))
         ico.setStyleSheet("background:transparent;padding-top:8px;padding-left:7px;padding-top:9px;")
 
         logo.setFixedSize(50, 50)
