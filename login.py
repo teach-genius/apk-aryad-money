@@ -3,6 +3,7 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from registre_email import RegistreEmail
 from frame1 import Frame1
+import requests
 
 class Login(QWidget):
     def __init__(self,parent) -> None:
@@ -23,15 +24,15 @@ class Login(QWidget):
 
     def entry(self):
         
-        l1 = QLineEdit(self.frame_entry)
-        l1.setPlaceholderText("Username")
-        l1.setStyleSheet("background-color:#545454;border-radius:10px;padding:12px;")
-        l1.setGeometry(20, 205, 360, 40)
+        self.l1 = QLineEdit(self.frame_entry)
+        self.l1.setPlaceholderText("Username")
+        self.l1.setStyleSheet("background-color:#545454;border-radius:10px;padding:12px;")
+        self.l1.setGeometry(20, 205, 360, 40)
 
-        l2 = QLineEdit(self.frame_entry)
-        l2.setPlaceholderText("Password")
-        l2.setStyleSheet("background-color:#545454;border-radius:10px;padding:12px;")
-        l2.setGeometry(20, 265, 360, 40)
+        self.l2 = QLineEdit(self.frame_entry)
+        self.l2.setPlaceholderText("Password")
+        self.l2.setStyleSheet("background-color:#545454;border-radius:10px;padding:12px;")
+        self.l2.setGeometry(20, 265, 360, 40)
 
         registre = QLabel("<a href='#' style='color:#4BFFB3;'>Mot de passe oublié?<\a>",self.frame_entry)
         registre.setGeometry(140,315,150,30)
@@ -88,13 +89,25 @@ class Login(QWidget):
         vue.setStyleSheet("background-color:#3D3D3D;")
 
     def log(self):
-        f = Frame1()
-        self.parent.setframe(f)
-        print("pressed btn")
-    
+        name = self.l1.text()
+        pswd = self.l2.text()
+        
+        if self.call_api(name, pswd):
+            f = Frame1()
+            self.parent.setframe(f)
+        else:
+            print("Mot de passe ou nom d'utilisateur incorrect")
+
     def on_link_clicked(self):
         f = RegistreEmail(self.parent)
         self.parent.setframe(f)
-       
-        
+
+    def call_api(self, name, psw):
+        url = f"http://127.0.0.1:8000/connexion/{name}/{psw}"
+        response = requests.get(url)
+        if response.status_code == 200:
+            return response.json().get('connexion', False)
+        else:
+            return False
+
 
