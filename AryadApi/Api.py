@@ -1,10 +1,13 @@
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+import os
 
 app = FastAPI()
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def read_root():
-    return {"message": "Hello World"}
+    with open(os.path.join("static", "index.html")) as f:
+        return f.read()
 
 @app.get("/items/{item_id}")
 async def read_item(item_id: int, q: str = None):
