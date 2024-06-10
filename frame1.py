@@ -53,12 +53,16 @@ class Frame1(QWidget):
         box2.setFixedHeight(250)
         layout = QVBoxLayout()
 
+        box3 = QWidget()
+        bx3_layout =QVBoxLayout()
+
+
         b1 = QWidget()
         lb1_layout = QHBoxLayout()
         lb1 = QLabel("Acceuil")
         lb1.setStyleSheet("color:#808080;")
         ico_drach = QLabel()
-        ico_drach.setPixmap(QPixmap(r"icons\icon10.png").scaled(13,20))
+        ico_drach.setPixmap(QPixmap(r"icons\21.png").scaled(30,30))
         lb1_layout.addWidget(ico_drach)
         lb1_layout.addWidget(lb1)
         b1.setLayout(lb1_layout)
@@ -103,11 +107,26 @@ class Frame1(QWidget):
         lb5 = QLabel("Parametre")
         lb5.setStyleSheet("color:#808080;")
         ico_setting = QLabel()
-        ico_setting.setPixmap(QPixmap(r"icons\icon7.png").scaled(20,40))
+        ico_setting.setPixmap(QPixmap(r"icons\22.png").scaled(30,30))
         lb5_layout.addWidget(ico_setting)
         lb5_layout.addWidget(lb5)
         b5.setLayout(lb5_layout)
         b5.setFixedHeight(45)
+
+        b6 = QWidget()
+        b6.setStyleSheet("background-color:#D9D9D9;")
+        lb6_layout = QHBoxLayout()
+        lb6 = QLabel("Sortir")
+        lb6.setStyleSheet("color:#808080;")
+        ico_exit = QLabel()
+        ico_exit.setPixmap(QPixmap(r"icons\exit.png").scaled(30,30))
+        lb6_layout.addWidget(ico_exit)
+        lb6_layout.addWidget(lb6)
+        b6.setLayout(lb6_layout)
+        b6.setFixedHeight(45)
+
+        bx3_layout.addWidget(b6)
+        box3.setLayout(bx3_layout)
        
 
         layout.addWidget(b1)
@@ -119,6 +138,7 @@ class Frame1(QWidget):
 
         layout_btn.addWidget(box1)
         layout_btn.addWidget(box2)
+        layout_btn.addWidget(box3)
         self.panel_lateral.setLayout(layout_btn)
 
         
@@ -221,10 +241,24 @@ class Frame1(QWidget):
         card = QWidget(s1)
         card.setStyleSheet("background: qlineargradient( x1: 0, y1: 0, x2: 1, y2: 1,  stop: 0 #284AA5, stop: 1 #4B7DFF);")
 
+        card2 = QWidget(s1)
+        card2.setStyleSheet("background: qlineargradient( x1: 0, y1: 0, x2: 1, y2: 1, stop:0#4BFF93,stop:1#32A528);")
+
+
+
         l1 = QLabel("Current Balance",card)
         l2 = QLabel("5282 3456 7890 1289",card)
-        l3 = QLabel("₹5,75,200",card)
+        l3 = QLabel("MAD 5,75,200",card)
         l4 = QLabel("09/25",card)
+        l5 = QLabel("Aryad",card)
+
+        l1_1 = QLabel("Current Balance",card2)
+        l2_2 = QLabel("5282 2690 7890 1289",card2)
+        l3_3 = QLabel("FCFA 5,75,200",card2)
+        l4_4 = QLabel("09/25",card2)
+        l5_5 = QLabel("Aryad",card2)
+
+       
 
         l1.setGeometry(15,10,200,30)
         l1.setStyleSheet("font-size:15px;background:transparent;")
@@ -233,7 +267,8 @@ class Frame1(QWidget):
         l2.setStyleSheet("font-size:15px;font:bold;background:transparent;")
 
         l3.setGeometry(15,32,200,30)
-        l3.setStyleSheet("font-size:30px;font:bold;background:transparent;")
+        l3.setStyleSheet("font-size:20px;font:bold;background:transparent;")
+
         logo = QLabel(card)
         logo.setStyleSheet("background:transparent;")
         logo.setPixmap(QPixmap(r"icons\13.png").scaled(43,27))
@@ -242,8 +277,35 @@ class Frame1(QWidget):
         l4.setGeometry(235,140,40,20)
         l4.setStyleSheet("font-size:15px;font:bold;background:transparent;")
 
+        l5.setGeometry(251,50,50,15)
+        l5.setStyleSheet("background:transparent;font-size:8px;")
+
+
+        l1_1.setGeometry(15,10,200,30)
+        l1_1.setStyleSheet("font-size:15px;background:transparent;")
+
+        l2_2.setGeometry(15,140,200,30)
+        l2_2.setStyleSheet("font-size:15px;font:bold;background:transparent;")
+
+        l3_3.setGeometry(15,32,200,30)
+        l3_3.setStyleSheet("font-size:20px;font:bold;background:transparent;")
+
+        logo_2 = QLabel(card2)
+        logo_2.setStyleSheet("background:transparent;")
+        logo_2.setPixmap(QPixmap(r"icons\13.png").scaled(43,27))
+        logo_2.setGeometry(240,10,50,60)
+
+        l4_4.setGeometry(235,140,40,20)
+        l4_4.setStyleSheet("font-size:15px;font:bold;background:transparent;")
+
+        l5_5.setGeometry(251,50,50,15)
+        l5_5.setStyleSheet("background:transparent;font-size:8px;")
+
         
         card.setGeometry(10,13,300,178)
+        card2.setGeometry(370,13,300,178)
+
+
         s1.setStyleSheet("background-color:#3D3D3D;border-radius:15px;")
 
         self.defilementHistorique()
