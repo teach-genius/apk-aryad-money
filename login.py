@@ -3,8 +3,7 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from registre_email import RegistreEmail
 from frame1 import Frame1
-import requests
-
+from commandes.methodes import call_api
 class Login(QWidget):
     def __init__(self,parent) -> None:
         super().__init__()
@@ -89,25 +88,26 @@ class Login(QWidget):
         vue.setStyleSheet("background-color:#3D3D3D;")
 
     def log(self):
-        name = self.l1.text()
-        pswd = self.l2.text()
-        
-        if self.call_api(name, pswd):
-            f = Frame1()
-            self.parent.setframe(f)
-        else:
-            print("Mot de passe ou nom d'utilisateur incorrect")
+            name = self.l1.text()
+            pswd = self.l2.text()
+            if name!="" and pswd!="":
+                login, code = call_api(name, pswd)
+                if login:
+                    f = Frame1(code)
+                    self.parent.setframe(f)
+                else:
+                    self.show_message("ERROR","Mot de passe ou nom d'utilisateur incorrect")
+            else:
+                self.show_message("ERROR","Remplissez tous les champs")
+
 
     def on_link_clicked(self):
         f = RegistreEmail(self.parent)
         self.parent.setframe(f)
-
-    def call_api(self, name, psw):
-        url = f"http://127.0.0.1:8000/connexion/{name}/{psw}"
-        response = requests.get(url)
-        if response.status_code == 200:
-            return response.json().get('connexion', False)
-        else:
-            return False
-
-
+    
+    def show_message(self,titre,message):
+        msgBox = QMessageBox()
+        msgBox.setWindowTitle(titre)
+        msgBox.setStyleSheet("background-color:#5B4040;color:#FF6B4B;")
+        msgBox.setText(message)
+        msgBox.exec()

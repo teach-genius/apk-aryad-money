@@ -25,12 +25,12 @@ class RegistreEmail(QWidget):
     def entry(self):
         
         l1 = QLineEdit(self.frame_entry)
-        l1.setPlaceholderText("Username")
+        l1.setPlaceholderText("Entrez votre adresse e-mail")
         l1.setStyleSheet("background-color:#545454;border-radius:10px;padding:12px;")
         l1.setGeometry(20, 205, 360, 40)
 
         l2 = QLineEdit(self.frame_entry)
-        l2.setPlaceholderText("Password")
+        l2.setPlaceholderText("Confirmer votre adresse e-mail")
         l2.setStyleSheet("background-color:#545454;border-radius:10px;padding:12px;")
         l2.setGeometry(20, 265, 360, 40)
 

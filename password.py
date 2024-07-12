@@ -29,13 +29,13 @@ class FramePassWord(QWidget):
         l1.setGeometry(20, 205, 360, 40)
 
         l2 = QLineEdit(self.frame_entry)
-        l2.setPlaceholderText("Confirmez votre adresse e-mail")
+        l2.setPlaceholderText("Entrez un mot de passe")
         l2.setStyleSheet("background-color:#545454;border-radius:10px;padding:12px;")
         l2.setGeometry(20, 265, 360, 40)
 
         
         l3 = QLineEdit(self.frame_entry)
-        l3.setPlaceholderText("Mot de passe")
+        l3.setPlaceholderText("Confirmez le mot de passe")
         l3.setStyleSheet("background-color:#545454;border-radius:10px;padding:12px;")
         l3.setGeometry(20, 325, 360, 40)
 

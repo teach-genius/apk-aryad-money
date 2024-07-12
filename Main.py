@@ -7,6 +7,7 @@ class Connexion(QMainWindow):
         super().__init__()
         self.central_widget = Login(self)
         self.setFixedSize(1200, 600)
+        self.setWindowTitle("AryadMoney Software")
         self.setframe(self.central_widget)
     def setframe(self, fen):
         self.setCentralWidget(fen)
