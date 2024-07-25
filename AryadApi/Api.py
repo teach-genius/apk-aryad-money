@@ -33,11 +33,11 @@ async def read_about():
 async def read_index_html():
     return read_static_file("index.html")
 
-@app.get("/connexion/{aryadmoney}/{user_name}/{user_password}")
-async def connected(user_name: str, user_password: str, aryadmoney: str):
-    client = Connexion(aryadmoney, "postgres", "uF4Xf^WQm(Yzm@ZXvJrh4NGw3g2GRQ", "localhost", "5432")
+@app.get("/connexion/aryadmoney/{user_name}/{user_password}")
+async def connected(user_name: str, user_password: str):
+    result = None
+    client = Connexion()
     connection = client.logindb()
-
     if connection:
         try:
             cursor = connection.cursor()
@@ -56,16 +56,17 @@ async def connected(user_name: str, user_password: str, aryadmoney: str):
             cursor.close()
             connection.close()
 
-        if result:
+        if result is not None:
+            print(result)
             return {"connexion": True, "code_user": result[0]}
         else:
-            return {"connexion": False}
+            return {"connexion": False,"code_user":None}
     else:
         raise HTTPException(status_code=500, detail="Connexion à la base de données échouée")
 
 @app.get("/solde_account/soldefcfa/aryadmoney/{code_user}")
 async def solde_fcfa_view(code_user: str):
-    client = Connexion("aryadmoney", "postgres", "uF4Xf^WQm(Yzm@ZXvJrh4NGw3g2GRQ", "localhost", "5432")
+    client = Connexion()
     connection = client.logindb()
     
     if connection:
@@ -96,7 +97,7 @@ async def solde_fcfa_view(code_user: str):
 
 @app.get("/solde_account/soldedh/aryadmoney/{code_user}")
 async def solde_dh_view(code_user: str):
-    client = Connexion("aryadmoney", "postgres", "uF4Xf^WQm(Yzm@ZXvJrh4NGw3g2GRQ", "localhost", "5432")
+    client = Connexion()
     connection = client.logindb()
     
     if connection:

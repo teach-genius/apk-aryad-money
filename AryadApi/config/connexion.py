@@ -1,23 +1,21 @@
 import psycopg2
 from psycopg2 import sql
-
+import json
 class Connexion:
-    def __init__(self, db, user, pswd, host, port) -> None:
-        self.__dbname = db
-        self.__user = user
-        self.__password = pswd
-        self.__host = host
-        self.__port = port
+    def __init__(self) -> None:
+        with open("parametre.json","r")as file:
+            self.info = json.load(file)
+            file.close()
 
     def logindb(self):
         try:
             # Établir la connexion
             connection = psycopg2.connect(
-                dbname=self.__dbname,
-                user=self.__user,
-                password=self.__password,
-                host=self.__host,
-                port=self.__port
+                dbname=self.info["db_name"],
+                user=self.info["user_name"],
+                password=self.info["password_db"],
+                host=self.info["host"],
+                port=self.info["port"]
             )
             return connection
         except Exception as error:

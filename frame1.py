@@ -4,16 +4,19 @@ from PySide6.QtGui import *
 import requests
 import datetime
 import locale
+import json
 
 class History(QWidget):
     def __init__(self) -> None:
         super().__init__()
 
 
-
 class Frame1(QWidget):
     def __init__(self,code_user) -> None:
         super().__init__()
+        with open("parametre.json","r") as file:
+            self.infoapk = json.load(file)
+            file.close()
       
         self.setStyleSheet("background-color:#2E2E2E;")
         self.setFixedSize(1200, 600)
@@ -41,6 +44,15 @@ class Frame1(QWidget):
         layout2 = QVBoxLayout()
 
         w1 = QWidget()
+        logo = QLabel(w1)
+        logo.setPixmap(QPixmap(r"icons\logo.png").scaled(30,26))
+        logo.setGeometry(10,8,30,25)
+        logo.setStyleSheet("background-color:blue;")
+        
+        name_logo = QLabel(str(self.infoapk["name_companie"]),w1)
+        name_logo.setGeometry(55,8,150,25)
+        name_logo.setStyleSheet("font-size:16px;font:bold;color:qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0#FFB74B,stop:1#32A528)")
+        
         w1.setFixedHeight(40)
         w1.setStyleSheet("background-color:#2E2E2E;")
         w2 = QWidget()
@@ -517,6 +529,25 @@ class Frame1(QWidget):
         s1_pan_in.setStyleSheet("background-color:rgba(75, 255, 179, 89);border-radius:15px;")
         s1_pan_in.setGeometry(10,110,160,85)
 
+        factures = QLabel(s1_pan_in)
+        factures.setStyleSheet("background-color:transparent;")
+        factures.setPixmap(QPixmap(r"icons\factures.png").scaled(45,55))
+        factures.setGeometry(20,10,45,55)
+
+        btn_facture = QPushButton("Factures",s1_pan_in)
+        btn_facture.setGeometry(17,60,50,20)
+        btn_facture.setStyleSheet("font-size:10px;font:bold;color:black;background-color:transparent;")
+
+
+        Commission = QLabel(s1_pan_in)
+        Commission.setStyleSheet("background-color:transparent;")
+        Commission.setPixmap(QPixmap(r"icons\com.png").scaled(45,55))
+        Commission.setGeometry(90,10,45,55)
+
+        btn_commission = QPushButton("Commissions",s1_pan_in)
+        btn_commission.setGeometry(82,60,61,20)
+        btn_commission.setStyleSheet("font-size:10px;font:bold;color:black;background-color:transparent;")
+
         s12.setStyleSheet("background-color:#3D3D3D;border-radius:15px;")
 
         s22 = QWidget()
@@ -633,18 +664,4 @@ class Frame1(QWidget):
         else:
             return False
     
-    def show_message(self,titre,message):
-        # Créez une QMessageBox
-        msg = QMessageBox()
-        # Définissez les propriétés de la boîte de message
-        msg.setIcon(QMessageBox.Information)
-        msg.setText(message)
-        msg.setWindowTitle(titre)
-        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-        # Affichez la boîte de message et récupérez la réponse de l'utilisateur
-        retval = msg.exec_()
-
-        if retval == QMessageBox.Ok:
-            print("Ok cliqué")
-        else:
-            print("Annuler cliqué")
+   

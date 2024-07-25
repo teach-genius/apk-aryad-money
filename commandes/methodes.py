@@ -5,6 +5,6 @@ def call_api(name, psw):
     response = requests.get(url)
     if response.status_code == 200:
         response_json = response.json()
-        return response_json.get('connexion', False), response_json.get('code_user')
+        return response_json
     else:
-        return False, None
+        return {}

@@ -1,4 +1,5 @@
 import string
+import psycopg2
 class Transaction:
     def __init__(self) -> None:
         self.date =None
@@ -6,7 +7,8 @@ class Transaction:
         self.arrive = None
         self.solde =None
         
-    def Retrait(self,code_userA,code_userB):
+    def Retrait(self,id_cardA,id_cardB):
+        
         if(True):
             """
             SELECT solde FROM COMPTE WHERE id_user = id_userA
