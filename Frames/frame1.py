@@ -4,7 +4,7 @@ from PySide6.QtGui import *
 import requests
 import datetime
 import locale
-import json
+from settings import commandes
 
 class History(QWidget):
     def __init__(self) -> None:
@@ -14,22 +14,15 @@ class History(QWidget):
 class Frame1(QWidget):
     def __init__(self,code_user) -> None:
         super().__init__()
-        with open("parametre.json","r") as file:
-            self.infoapk = json.load(file)
-            file.close()
-      
+        self.infoapk = commandes
         self.setStyleSheet("background-color:#2E2E2E;")
         self.setFixedSize(1200, 600)
-
         self.declaration(code_user)
         self.layout = QHBoxLayout()
         self.lateral()
         self.central()
-
         self.setLayout(self.layout)
        
-        
-    
     def lateral(self):
         self.panel_lateral = QWidget()
         self.panel_lateral.setFixedWidth(230)
@@ -39,10 +32,8 @@ class Frame1(QWidget):
     
     def btnconnect(self):
         layout_btn = QVBoxLayout()
-
         box1 = QWidget()
         layout2 = QVBoxLayout()
-
         w1 = QWidget()
         logo = QLabel(w1)
         logo.setPixmap(QPixmap(r"Frames\icons\logo.png").scaled(30,26))
@@ -123,7 +114,6 @@ class Frame1(QWidget):
         self.b4.setLayout(lb4_layout)
         self.b4.setFixedHeight(45)
         
-
         self.b5 = QWidget()
         lb5_layout = QHBoxLayout()
         lb5 = QLabel("Parametre")
@@ -151,7 +141,6 @@ class Frame1(QWidget):
 
         bx3_layout.addWidget(b6)
         box3.setLayout(bx3_layout)
-       
 
         layout.addWidget(self.b1)
         layout.addWidget(self.b2)
@@ -164,11 +153,6 @@ class Frame1(QWidget):
         layout_btn.addWidget(box2)
         layout_btn.addWidget(box3)
         self.panel_lateral.setLayout(layout_btn)
-
-        
-        
-
-
 
     def central(self):
         self.panel_central = QWidget()
@@ -207,9 +191,6 @@ class Frame1(QWidget):
         notif.setFixedSize(36,36)
         notif.setStyleSheet("background-color:transparent;")
         
-    
-        
-
         sear_wid = QWidget(panel_top)
         sear_wid.setGeometry(628,0,300,40)
         sear_wid.setStyleSheet("border-radius:12px;background-color:#D9D9D9;")
@@ -242,7 +223,6 @@ class Frame1(QWidget):
         alltext.setStyleSheet("background-color:transparent;font-size:16px;")
         depotext.setStyleSheet("background-color:transparent;font-size:16px;")
         retrait.setStyleSheet("background-color:transparent;font-size:16px;")
-        
 
         choice_lay.addWidget(alltext)
         choice_lay.addWidget(depotext)
@@ -260,7 +240,6 @@ class Frame1(QWidget):
             titles_layout.addWidget(l)
         titles_win.setLayout(titles_layout)
         titles_win.setGeometry(20,0,910,40)
-
 
         view_historique.setFixedHeight(380)
         History_scrolarea = QScrollArea(view_historique)
@@ -318,8 +297,6 @@ class Frame1(QWidget):
         panel_transaction.setStyleSheet("background-color:#2E2E2E;")
         self.replace_widget(self.old_wid,panel_transaction)
 
-    
-
     def replace_widget(self,old_wid,new_wid):
         self.old_wid = new_wid
         index = self.layout.indexOf(old_wid)
@@ -337,16 +314,13 @@ class Frame1(QWidget):
         win.setStyleSheet("background-color:#4BFFB3;")
         self.selected = win
         
-    
     def declaration(self,code):
         self.title = QLabel("AryadMoney")
         self.title.setStyleSheet("font-size:18px;font:bold;color:qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0#FFB74B,stop:1#32A528)")
         
-
         self.topcentralpan()
         self.centrepan(code)
        
-
     def topcentralpan(self):
         self.sous_panel_central_top = QWidget()
         self.sous_panel_central_top.setFixedHeight(60)
@@ -402,7 +376,6 @@ class Frame1(QWidget):
         w3.setStyleSheet("background-color:#5B24E0;border-radius:10px;")
         w3.setLayout(lay_out2)
         
-
         top_lauout =QHBoxLayout()
         top_lauout.addWidget(self.title) 
         top_lauout.addWidget(w1)
@@ -429,8 +402,8 @@ class Frame1(QWidget):
         card2.setStyleSheet("background: qlineargradient( x1: 0, y1: 0, x2: 1, y2: 1, stop:0#4BFF93,stop:1#32A528);")
 
         l1 = QLabel("Current Balance",card)
-        dh_solde,card_id = self.getsolde_dh(code)
-        l2 = QLabel(f"{self.format_with_spaces(card_id)}",card)
+        dh_solde,card_id = getsolde_dh(code)
+        l2 = QLabel(f"{self.format_with_spaces(card_id)}",card,4)
         l3 = QLabel(f"MAD {dh_solde}",card)
         l4 = QLabel("09/25",card)
         l5 = QLabel("Aryad",card)
@@ -453,11 +426,10 @@ class Frame1(QWidget):
         ppu2.setGeometry(10,82,32,32)
         ppu2.setStyleSheet("background-color:transparent;")
 
-
         l1_1 = QLabel("Current Balance",card2)
-        solde_fcfa,id_card= self.getsolde_fcfa(code);
-        l2_2 = QLabel(self.format_with_spaces(id_card),card2)
-        l3_3 = QLabel(f"FCFA {self.format_with_spaces3(solde_fcfa)}",card2)
+        solde_fcfa,id_card= getsolde_fcfa(code);
+        l2_2 = QLabel(self.format_with_spaces(id_card),card2,4)
+        l3_3 = QLabel(f"FCFA {self.format_with_spaces(solde_fcfa)}",card2,3)
         l4_4 = QLabel("09/25",card2)
         l5_5 = QLabel("Aryad",card2)
 
@@ -501,12 +473,8 @@ class Frame1(QWidget):
 
         l5_5.setGeometry(251,50,50,15)
         l5_5.setStyleSheet("background:transparent;font-size:8px;")
-
-        
         card.setGeometry(10,13,300,178)
         card2.setGeometry(370,13,300,178)
-
-
         s1.setStyleSheet("background-color:#3D3D3D;border-radius:15px;")
 
         self.defilementHistorique()
@@ -627,41 +595,13 @@ class Frame1(QWidget):
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         scroll.setWidgetResizable(True)
         scroll.setWidget(slide_historique)
-
         scroll.setGeometry(10,40,660,180)
     
-    def format_with_spaces(self,number):
+    def format_with_spaces(self,number,c):
         # Convertir le nombre en chaîne de caractères s'il ne l'est pas déjà
         number_str = str(number)
         # Découper la chaîne en morceaux de 4 caractères
-        chunks = [number_str[i:i+4] for i in range(0, len(number_str), 4)]
+        chunks = [number_str[i:i+c] for i in range(0, len(number_str), c)]
         # Joindre les morceaux avec un espace
         formatted_number = ' '.join(chunks)
         return formatted_number
-    
-    def format_with_spaces3(self,number):
-        # Convertir le nombre en chaîne de caractères s'il ne l'est pas déjà
-        number_str = str(number)
-        # Découper la chaîne en morceaux de 4 caractères
-        chunks = [number_str[i:i+3] for i in range(0, len(number_str), 3)]
-        # Joindre les morceaux avec un espace
-        formatted_number = ' '.join(chunks)
-        return formatted_number
-    
-    def getsolde_fcfa(self,code_user):
-        url = f"http://127.0.0.1:8000/solde_account/soldefcfa/aryadmoney/{code_user}"
-        response = requests.get(url)
-        if response.status_code == 200:
-            return response.json().get("solde_fcfa"),response.json().get("id_card")
-        else:
-            return False
-    
-    def getsolde_dh(self,code_user):
-        url = f"http://127.0.0.1:8000/solde_account/soldedh/aryadmoney/{code_user}"
-        response = requests.get(url)
-        if response.status_code == 200:
-            return response.json().get("solde_dh"),response.json().get("id_card")
-        else:
-            return False
-    
-   
