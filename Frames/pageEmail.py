@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
-from password import FramePassWord
+from Frames.password import FramePassWord
 
 
 
@@ -67,7 +67,7 @@ class FrameEmail(QWidget):
 
         logo = QLabel(self.frame_entry)
         ico = QLabel(logo)
-        ico.setPixmap(QPixmap(r"icons\14.png").scaled(35,35))
+        ico.setPixmap(QPixmap(r"Frames\icons\14.png").scaled(35,35))
         ico.setStyleSheet("background:transparent;padding-top:8px;padding-left:7px;")
 
         logo.setFixedSize(50, 50)

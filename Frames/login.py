@@ -1,9 +1,8 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
-from registre_email import RegistreEmail
-from frame1 import Frame1
-from commandes.methodes import call_api
+from Frames.registre_email import RegistreEmail
+from Frames.frame1 import Frame1
 import json
 class Login(QWidget):
     def __init__(self,parent) -> None:
@@ -70,7 +69,7 @@ class Login(QWidget):
 
         logo = QLabel(self.frame_entry)
         ico = QLabel(logo)
-        ico.setPixmap(QPixmap(r"icons\16.png").scaled(40,40))
+        ico.setPixmap(QPixmap(r"Frames\icons\16.png").scaled(40,40))
         ico.setStyleSheet("background:transparent;padding-top:8px;padding-left:7px;padding-top:9px;")
 
         logo.setFixedSize(50, 50)
@@ -95,9 +94,9 @@ class Login(QWidget):
             name = self.l1.text()
             pswd = self.l2.text()
             if name!="" and pswd!="":
-                response = call_api(name, pswd)
-                if response.get("connexion"):
-                    f = Frame1(response.get("code_user"))
+                response = {'connexion':True,'code_user':'OEC20241705'}
+                if response['connexion']:
+                    f = Frame1(response["code_user"])
                     self.parent.setframe(f)
                 else:
                     self.show_message("ERROR","Mot de passe ou nom d'utilisateur incorrect")

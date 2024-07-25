@@ -1,8 +1,8 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
-from frame1 import Frame1
-from registre import FrameName
+from Frames.frame1 import Frame1
+from Frames.registre import FrameName
 
 
 class RegistreEmail(QWidget):
@@ -58,7 +58,7 @@ class RegistreEmail(QWidget):
 
         logo = QLabel(self.frame_entry)
         ico = QLabel(logo)
-        ico.setPixmap(QPixmap(r"icons\icon14.png").scaled(35,35))
+        ico.setPixmap(QPixmap(r"Frames\icons\icon14.png").scaled(35,35))
         ico.setStyleSheet("background:transparent;padding-top:8px;padding-left:7px;")
 
         logo.setFixedSize(50, 50)

@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QApplication, QMainWindow
-from login import Login
+from Frames.login import Login
 import json
 
 

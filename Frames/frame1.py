@@ -45,7 +45,7 @@ class Frame1(QWidget):
 
         w1 = QWidget()
         logo = QLabel(w1)
-        logo.setPixmap(QPixmap(r"icons\logo.png").scaled(30,26))
+        logo.setPixmap(QPixmap(r"Frames\icons\logo.png").scaled(30,26))
         logo.setGeometry(10,8,30,25)
         logo.setStyleSheet("background-color:blue;")
         
@@ -80,7 +80,7 @@ class Frame1(QWidget):
         lb1.setStyleSheet("color:#808080;")
         ico_drach = QPushButton()
         ico_drach.clicked.connect(self.Acceuil)
-        ico_drach.setIcon(QIcon(QPixmap(r"icons\home.png").scaled(30, 30)))  # Ajout de l'icône correctement
+        ico_drach.setIcon(QIcon(QPixmap(r"Frames\icons\home.png").scaled(30, 30)))  # Ajout de l'icône correctement
         lb1_layout.addWidget(ico_drach)
         lb1_layout.addWidget(lb1)
         self.b1.setLayout(lb1_layout)
@@ -93,7 +93,7 @@ class Frame1(QWidget):
         lb2.setStyleSheet("color:#808080;")
         ico_inv = QPushButton()
         ico_inv.clicked.connect(self.invoivepanel)
-        ico_inv.setIcon(QIcon(QPixmap(r"icons\transaction.png").scaled(30, 30)))
+        ico_inv.setIcon(QIcon(QPixmap(r"Frames\icons\transaction.png").scaled(30, 30)))
         lb2_layout.addWidget(ico_inv)
         lb2_layout.addWidget(lb2)
         self.b2.setLayout(lb2_layout)
@@ -105,7 +105,7 @@ class Frame1(QWidget):
         lb3.setStyleSheet("color:#808080;")
         ico_card= QPushButton()
         ico_card.clicked.connect(self.cardpanel)
-        ico_card.setIcon(QIcon(QPixmap(r"icons\19.png").scaled(30, 30)))
+        ico_card.setIcon(QIcon(QPixmap(r"Frames\icons\19.png").scaled(30, 30)))
         lb3_layout.addWidget(ico_card)
         lb3_layout.addWidget(lb3)
         self.b3.setLayout(lb3_layout)
@@ -117,7 +117,7 @@ class Frame1(QWidget):
         lb4.setStyleSheet("color:#808080;")
         ico_history = QPushButton()
         ico_history.clicked.connect(self.Historique)
-        ico_history.setIcon(QIcon(QPixmap(r"icons\20.png").scaled(30, 30)))  # Ajout de l'icône correctement
+        ico_history.setIcon(QIcon(QPixmap(r"Frames\icons\20.png").scaled(30, 30)))  # Ajout de l'icône correctement
         lb4_layout.addWidget(ico_history)
         lb4_layout.addWidget(lb4)
         self.b4.setLayout(lb4_layout)
@@ -130,7 +130,7 @@ class Frame1(QWidget):
         lb5.setStyleSheet("color:#808080;")
         ico_setting = QPushButton()
         ico_setting.clicked.connect(self.parametrepanel)
-        ico_setting.setIcon(QIcon(QPixmap(r"icons\22.png").scaled(30, 30)))
+        ico_setting.setIcon(QIcon(QPixmap(r"Frames\icons\22.png").scaled(30, 30)))
         lb5_layout.addWidget(ico_setting)
         lb5_layout.addWidget(lb5)
         self.b5.setLayout(lb5_layout)
@@ -143,7 +143,7 @@ class Frame1(QWidget):
         lb6.setStyleSheet("color:#808080;")
         ico_exit = QPushButton()
         ico_exit.clicked.connect(QApplication.instance().quit)
-        ico_exit.setIcon(QIcon(QPixmap(r"icons\exit.png").scaled(30, 30)))
+        ico_exit.setIcon(QIcon(QPixmap(r"Frames\icons\exit.png").scaled(30, 30)))
         lb6_layout.addWidget(ico_exit)
         lb6_layout.addWidget(lb6)
         b6.setLayout(lb6_layout)
@@ -191,7 +191,7 @@ class Frame1(QWidget):
         wh1.setFixedWidth(125)
 
         date_icon = QLabel()
-        date_icon.setPixmap(QPixmap(r"icons\fleche.png").scaled(24,24))
+        date_icon.setPixmap(QPixmap(r"Frames\icons\fleche.png").scaled(24,24))
         # Définir la locale pour afficher la date en français
         locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
         date =datetime.date.today()
@@ -203,7 +203,7 @@ class Frame1(QWidget):
 
         notif = QPushButton(panel_top)
         notif.setGeometry(550,0,36,36)
-        notif.setIcon(QIcon(QPixmap(r"icons\18.png")))
+        notif.setIcon(QIcon(QPixmap(r"Frames\icons\18.png")))
         notif.setFixedSize(36,36)
         notif.setStyleSheet("background-color:transparent;")
         
@@ -219,7 +219,7 @@ class Frame1(QWidget):
         edit_search.setStyleSheet("color:black;")
         edit_search.setPlaceholderText("search here")
         btn_search = QPushButton()
-        btn_search.setIcon(QIcon(QPixmap(r"icons\icon5.png")))
+        btn_search.setIcon(QIcon(QPixmap(r"Frames\icons\icon5.png")))
         lay_h2.addWidget(edit_search)
         lay_h2.addWidget(btn_search)
         sear_wid.setLayout(lay_h2)
@@ -357,7 +357,7 @@ class Frame1(QWidget):
         barre_search = QLineEdit()
         barre_search.setPlaceholderText("Search")
         barre_search.setStyleSheet("color:black;")
-        btn_search.setIcon(QIcon(QPixmap(r"icons\icon5.png")))
+        btn_search.setIcon(QIcon(QPixmap(r"Frames\icons\icon5.png")))
         lay_out.addWidget(barre_search)
         lay_out.addWidget(btn_search)
         w1.setStyleSheet("background-color:#D9D9D9;border-radius:10px;")
@@ -368,19 +368,19 @@ class Frame1(QWidget):
         w2_layout = QHBoxLayout()
         w2.setFixedSize(100,40)
         b1 = QPushButton("")
-        b1.setIcon(QIcon(QPixmap(r"icons\icon1.png")))
+        b1.setIcon(QIcon(QPixmap(r"Frames\icons\icon1.png")))
         b1.setStyleSheet("background-color:transparent;")
         b1.setFixedSize(36,36)
         b2 = QPushButton("")
-        b2.setIcon(QIcon(QPixmap(r"icons\18.png")))
+        b2.setIcon(QIcon(QPixmap(r"Frames\icons\18.png")))
         b2.setStyleSheet("background-color:transparent;")
         b2.setFixedSize(36,36)
         b3 = QPushButton("")
-        b3.setIcon(QIcon(QPixmap(r"icons\icon3.png")))
+        b3.setIcon(QIcon(QPixmap(r"Frames\icons\icon3.png")))
         b3.setStyleSheet("background-color:transparent;")
         b3.setFixedSize(36,36)
         b4 = QPushButton("")
-        b4.setIcon(QIcon(QPixmap(r"icons\icon4.png")))
+        b4.setIcon(QIcon(QPixmap(r"Frames\icons\icon4.png")))
         b4.setStyleSheet("background-color:transparent;")
         b4.setFixedSize(36,36)
         b3.setFixedSize(36,36)
@@ -395,7 +395,7 @@ class Frame1(QWidget):
         lay_out2 = QHBoxLayout()
         text_lab = QLabel("Generate Report")
         lab_icon = QLabel()
-        lab_icon.setPixmap(QPixmap(r"icons\icon6.png").scaled(16,16))
+        lab_icon.setPixmap(QPixmap(r"Frames\icons\icon6.png").scaled(16,16))
         lay_out2.addWidget(text_lab)
         lay_out2.addWidget(lab_icon)
         w3.setFixedSize(130,40)
@@ -436,20 +436,20 @@ class Frame1(QWidget):
         l5 = QLabel("Aryad",card)
 
         puce1 = QLabel(card)
-        puce1.setPixmap(QPixmap(r"icons\puce.png").scaled(47,37))
+        puce1.setPixmap(QPixmap(r"Frames\icons\puce.png").scaled(47,37))
         puce1.setGeometry(45,80,47,37)
 
         puce2 = QLabel(card2)
-        puce2.setPixmap(QPixmap(r"icons\puce.png").scaled(47,37))
+        puce2.setPixmap(QPixmap(r"Frames\icons\puce.png").scaled(47,37))
         puce2.setGeometry(45,80,47,37)
 
         ppu = QLabel(card)
-        ppu.setPixmap(QPixmap(r"icons\ppu.png").scaled(32,32))
+        ppu.setPixmap(QPixmap(r"Frames\icons\ppu.png").scaled(32,32))
         ppu.setGeometry(10,82,32,32)
         ppu.setStyleSheet("background-color:transparent;")
 
         ppu2 = QLabel(card2)
-        ppu2.setPixmap(QPixmap(r"icons\ppu.png").scaled(32,32))
+        ppu2.setPixmap(QPixmap(r"Frames\icons\ppu.png").scaled(32,32))
         ppu2.setGeometry(10,82,32,32)
         ppu2.setStyleSheet("background-color:transparent;")
 
@@ -472,7 +472,7 @@ class Frame1(QWidget):
 
         logo = QLabel(card)
         logo.setStyleSheet("background:transparent;")
-        logo.setPixmap(QPixmap(r"icons\13.png").scaled(43,27))
+        logo.setPixmap(QPixmap(r"Frames\icons\13.png").scaled(43,27))
         logo.setGeometry(240,10,50,60)
 
         l4.setGeometry(235,140,40,20)
@@ -493,7 +493,7 @@ class Frame1(QWidget):
 
         logo_2 = QLabel(card2)
         logo_2.setStyleSheet("background:transparent;")
-        logo_2.setPixmap(QPixmap(r"icons\13.png").scaled(43,27))
+        logo_2.setPixmap(QPixmap(r"Frames\icons\13.png").scaled(43,27))
         logo_2.setGeometry(240,10,50,60)
 
         l4_4.setGeometry(235,140,40,20)
@@ -531,7 +531,7 @@ class Frame1(QWidget):
 
         factures = QLabel(s1_pan_in)
         factures.setStyleSheet("background-color:transparent;")
-        factures.setPixmap(QPixmap(r"icons\factures.png").scaled(45,55))
+        factures.setPixmap(QPixmap(r"Frames\icons\factures.png").scaled(45,55))
         factures.setGeometry(20,10,45,55)
 
         btn_facture = QPushButton("Factures",s1_pan_in)
@@ -541,7 +541,7 @@ class Frame1(QWidget):
 
         Commission = QLabel(s1_pan_in)
         Commission.setStyleSheet("background-color:transparent;")
-        Commission.setPixmap(QPixmap(r"icons\com.png").scaled(45,55))
+        Commission.setPixmap(QPixmap(r"Frames\icons\com.png").scaled(45,55))
         Commission.setGeometry(90,10,45,55)
 
         btn_commission = QPushButton("Commissions",s1_pan_in)
@@ -564,7 +564,7 @@ class Frame1(QWidget):
             t_layout = QHBoxLayout()
             i = QLabel()
             i.setStyleSheet("background:#2E2E2E;border-radius:15px;")
-            i.setPixmap(QPixmap(r"icons\17.png").scaled(20,20))
+            i.setPixmap(QPixmap(r"Frames\icons\17.png").scaled(20,20))
             i.setAlignment(Qt.AlignCenter)
             j = QLabel("Retrait")
             k = QLabel("-$265,00")       
