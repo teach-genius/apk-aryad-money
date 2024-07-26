@@ -33,9 +33,8 @@ class FrameName(QWidget):
         l2.setStyleSheet("background-color:#545454;border-radius:10px;padding:12px;")
         l2.setGeometry(20, 265, 360, 40)
 
-        
-        l3 = QComboBox(self.frame_entry)
-        l3.addItems(["Genre","Homme","Femme"])
+        l3 = QLineEdit(self.frame_entry)
+        l3.setPlaceholderText("Veuillez entrer votre CNI")
         l3.setStyleSheet("background-color:#545454;border-radius:10px;padding:12px;color:#D9D9D9;")
         l3.setGeometry(20, 325, 360, 40)
 

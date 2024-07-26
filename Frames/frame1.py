@@ -1,10 +1,10 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
-import requests
 import datetime
 import locale
 from settings import commandes
+from operatings import *
 
 class History(QWidget):
     def __init__(self) -> None:
@@ -403,7 +403,7 @@ class Frame1(QWidget):
 
         l1 = QLabel("Current Balance",card)
         dh_solde,card_id = getsolde_dh(code)
-        l2 = QLabel(f"{self.format_with_spaces(card_id)}",card,4)
+        l2 = QLabel(f"{self.format_with_spaces(card_id,4)}",card)
         l3 = QLabel(f"MAD {dh_solde}",card)
         l4 = QLabel("09/25",card)
         l5 = QLabel("Aryad",card)
@@ -428,8 +428,8 @@ class Frame1(QWidget):
 
         l1_1 = QLabel("Current Balance",card2)
         solde_fcfa,id_card= getsolde_fcfa(code);
-        l2_2 = QLabel(self.format_with_spaces(id_card),card2,4)
-        l3_3 = QLabel(f"FCFA {self.format_with_spaces(solde_fcfa)}",card2,3)
+        l2_2 = QLabel(self.format_with_spaces(id_card,4),card2)
+        l3_3 = QLabel(f"FCFA {self.format_with_spaces(solde_fcfa,3)}",card2)
         l4_4 = QLabel("09/25",card2)
         l5_5 = QLabel("Aryad",card2)
 

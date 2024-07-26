@@ -3,7 +3,9 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from Frames.registre_email import RegistreEmail
 from Frames.frame1 import Frame1
-import json
+from settings import commandes,URL_BASE
+from operatings import login
+
 class Login(QWidget):
     def __init__(self,parent) -> None:
         super().__init__()
@@ -48,11 +50,8 @@ class Login(QWidget):
 
     
     def barre(self):
-        with open("parametre.json","r") as file:
-            info = json.load(file)
-            file.close()
         barre = QWidget(self.centre)
-        name = QLabel(str(info["name_companie"]),barre)
+        name = QLabel(str(commandes["name_companie"]),barre)
         name.setStyleSheet("font-size:18px;font:bold;color:qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0#FFB74B,stop:1#32A528)")
         name.setGeometry(100,8,150,30)
         aide = QPushButton("?",barre)
@@ -94,9 +93,10 @@ class Login(QWidget):
             name = self.l1.text()
             pswd = self.l2.text()
             if name!="" and pswd!="":
-                response = {'connexion':True,'code_user':'OEC20241705'}
-                if response['connexion']:
-                    f = Frame1(response["code_user"])
+                token,droit = login(name,pswd)
+                if token is not None and droit == "SuperAdmin":
+                    f = Frame1(token)
+                    print("code reçu",token,"label reçu",droit,"\n")
                     self.parent.setframe(f)
                 else:
                     self.show_message("ERROR","Mot de passe ou nom d'utilisateur incorrect")
