@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
-import datetime
+from datetime import datetime
 import locale
 from settings import commandes
 from operatings import *
@@ -22,6 +22,11 @@ class Frame1(QWidget):
         self.lateral()
         self.central()
         self.setLayout(self.layout)
+        self.code_user = None
+        self.setcodeuser(code_user)
+    
+    def setcodeuser(self,new_code):
+        self.code_user = new_code
        
     def lateral(self):
         self.panel_lateral = QWidget()
@@ -178,12 +183,15 @@ class Frame1(QWidget):
         date_icon.setPixmap(QPixmap(r"Frames\icons\fleche.png").scaled(24,24))
         # Définir la locale pour afficher la date en français
         locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
-        date =datetime.date.today()
+        date =datetime.now().date()
         date = date.strftime("%d %B %Y")
         text_date = QLabel(str(date))
         lh1.addWidget(date_icon)
         lh1.addWidget(text_date)
         wh1.setLayout(lh1)
+        
+
+
 
         notif = QPushButton(panel_top)
         notif.setGeometry(550,0,36,36)
@@ -245,8 +253,28 @@ class Frame1(QWidget):
         History_scrolarea = QScrollArea(view_historique)
         frame_tab = QWidget()
         frame_tab_layout = QVBoxLayout()
-        for i in range(10):
+        Historiques = get_all_historique(self.code_user)
+        
+        for histo in Historiques:
+            win_orientation = QHBoxLayout()
+             # Créer des QLabel pour chaque champ de l'historique
+            Nature_Transaction = QLabel(histo["nature_transaction"])
+            Date_Transaction = QLabel(histo["date_transaction"])
+            Solde_Transaction = QLabel(str(histo["solde_transaction"]))
+            Emetteur = QLabel(str(histo["emetteur_id"]))
+            Recepteur = QLabel(str(histo["recepteur_id"]))
+            Methode_Paiement = QLabel(histo["methode_paiement"])
+            Pays_Emission = QLabel(histo["pays_emission"])
+            
+            win_orientation.addWidget(Nature_Transaction)
+            win_orientation.addWidget(Date_Transaction)
+            win_orientation.addWidget(Solde_Transaction)
+            win_orientation.addWidget(Emetteur)
+            win_orientation.addWidget(Recepteur)
+            win_orientation.addWidget(Methode_Paiement)
+            win_orientation.addWidget(Pays_Emission)
             win = QWidget()
+            win.setLayout(win_orientation)
             win.setFixedHeight(50)
             win.setStyleSheet("background:red;margin-bottom:1px;border-radius:0px;")
             frame_tab_layout.addWidget(win)
@@ -526,16 +554,29 @@ class Frame1(QWidget):
         frame_scroll = QScrollArea(s22)
         frame_rescent = QWidget()
         frame_layout = QVBoxLayout()
-
-        for i in range(100):
-            t = QWidget()
-            t_layout = QHBoxLayout()
-            i = QLabel()
-            i.setStyleSheet("background:#2E2E2E;border-radius:15px;")
-            i.setPixmap(QPixmap(r"Frames\icons\17.png").scaled(20,20))
+        Historiques = get_all_historique(self.code_user)
+        deviseA,deviseB="MAD","FCFA"
+        
+        for elmt in Historiques:
+             # Convertir en objet datetime
+            datetime_obj = datetime.fromisoformat(elmt["date_transaction"])
+            # Extraire la date uniquement
+            date_only = datetime_obj.date()
+            if(date_only==datetime.now().date()):
+                t = QWidget()
+                t_layout = QHBoxLayout()
+                i = QLabel()
+                i.setStyleSheet("background:#2E2E2E;border-radius:15px;")
+                if elmt["nature_transaction"] == "depot":
+                    i.setPixmap(QPixmap(r"Frames\icons\190.png").scaled(20,20))
+                    j = QLabel("Depot")
+                    k = QLabel(f"+{deviseA}{elmt["solde_transaction"]}")
+                if elmt["nature_transaction"] == "retrait":
+                    i.setPixmap(QPixmap(r"Frames\icons\17.png").scaled(20,20))
+                    j = QLabel("Retrait")
+                    k = QLabel(f"-{deviseB}{elmt["solde_transaction"]}")
+    
             i.setAlignment(Qt.AlignCenter)
-            j = QLabel("Retrait")
-            k = QLabel("-$265,00")       
             i.setFixedSize(32,32)
             t_layout.addWidget(i)
             t_layout.addWidget(j)
@@ -566,36 +607,39 @@ class Frame1(QWidget):
         scroll = QScrollArea(self.s2)
         slide_historique = QWidget()
         slide_historique_layout = QVBoxLayout()
-        
-        for i in range(20):
-            h1 = QWidget()
-            icon = QLabel("icon")
-            name = QLabel("Name")
-            date = QLabel("Date")
-            argent = QLabel("Argent")
-            card = QLabel("card")
+        Historiques = get_all_historique(self.code_user)
+        if Historiques:  # Vérifier si la liste des historiques n'est pas vide
+            for histo in Historiques:
+                h1 = QWidget()
+                icon = QLabel("icon")
+                
+                # Assurez-vous que les clés existent et que les données sont correctement formatées
+                emetteur_id = QLabel(str(histo.get("emetteur_id", "Inconnu")))
+                date = QLabel(str(histo.get("date_transaction", "Date inconnue")))
+                argent = QLabel(str(histo.get("solde_transaction", "0.0")))
+                nature = QLabel(histo.get("nature_transaction", "Nature inconnue"))
+            
+                icon.setFixedSize(30,30)
+                icon.setStyleSheet("background-color:red;border-radius:12px;")
+                layout_pan_histo = QHBoxLayout()
+                layout_pan_histo.addWidget(icon)
 
-            icon.setFixedSize(30,30)
-            icon.setStyleSheet("background-color:red;border-radius:12px;")
-            layout_pan_histo = QHBoxLayout()
-            layout_pan_histo.addWidget(icon)
+                layout_pan_histo.addWidget(emetteur_id)
+                layout_pan_histo.addWidget(date)
+                layout_pan_histo.addWidget(argent)
+                layout_pan_histo.addWidget(nature)
 
-            layout_pan_histo.addWidget(name)
-            layout_pan_histo.addWidget(date)
-            layout_pan_histo.addWidget(argent)
-            layout_pan_histo.addWidget(card)
-
-            h1.setStyleSheet("background-color:black;border:1px solid blue;border-radius:0px")
-            h1.setFixedHeight(50)
-            h1.setLayout(layout_pan_histo)
-            slide_historique_layout.addWidget(h1)
-        slide_historique.setLayout(slide_historique_layout)
-        #Scroll Area Properties
-        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        scroll.setWidgetResizable(True)
-        scroll.setWidget(slide_historique)
-        scroll.setGeometry(10,40,660,180)
+                h1.setStyleSheet("background-color:black;border:1px solid blue;border-radius:0px")
+                h1.setFixedHeight(50)
+                h1.setLayout(layout_pan_histo)
+                slide_historique_layout.addWidget(h1)
+            slide_historique.setLayout(slide_historique_layout)
+            #Scroll Area Properties
+            scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            scroll.setWidgetResizable(True)
+            scroll.setWidget(slide_historique)
+            scroll.setGeometry(10,40,660,180)
     
     def format_with_spaces(self,number,c):
         # Convertir le nombre en chaîne de caractères s'il ne l'est pas déjà
