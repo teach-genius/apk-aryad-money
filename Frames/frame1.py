@@ -3,7 +3,7 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from datetime import datetime
 import locale
-from settings import commandes
+from settings import *
 from operatings import *
 
 class History(QWidget):
@@ -317,13 +317,198 @@ class Frame1(QWidget):
         self.replace_widget(self.old_wid,panel_transaction)
     
     def invoivepanel(self):
+        # Sélectionner une option spécifique (assurez-vous que b2 est défini)
         self.selectionOption(self.b2)
+        # Création du panel principal et des layouts
         panel_transaction = QWidget()
-        layout_transaction =QVBoxLayout()
-        layout_transaction.addWidget(QWidget())
+        layout_transaction = QHBoxLayout(panel_transaction)
+        # Définir les listes pour les QComboBox
+        nature_transaction_liste = ["Nature Transaction", "depot", "retrait"]
+        pays_emission_liste = ["Pays Emission", "Maroc", "Gabon"]
+        methode_paiement_liste = ["Mode Paiement", "Espece", "Carte"]
+        
+        winleft = QWidget()
+        winleft_layout = QVBoxLayout()
+        top_pan = QWidget()
+        top_pan_layout = QHBoxLayout()
+        top_pan.setStyleSheet("background-color:#3D3D3D;border-radius:12px;")
+        one_frame_top = QWidget()
+        one_frame_top.setFixedWidth(175)
+        one_frame_top.setStyleSheet("background:rgba(75, 255, 179, 89)")
+        
+        three_frame_top = QWidget()
+        three_frame_top.setFixedWidth(175)
+        three_frame_top.setStyleSheet("background:rgba(75, 255, 179, 89)")
+        
+        
+        # Créer le QGroupBox pour contenir les boutons radio
+        groupRadio = QGroupBox("Choisir la Devise Emettrice",one_frame_top)
+        # Créer les QRadioButton pour les options de devises
+        dh_choice = QRadioButton("MAD",groupRadio)
+        dh_choice.setChecked(True)
+        fcfa_choice = QRadioButton("FCFA",groupRadio)
+        # Ajouter les QRadioButton au QGroupBox
+        dh_choice.setGeometry(12,17,100,20)
+        dh_choice.setStyleSheet("background:transparent;font-size:10px;")
+        fcfa_choice.setGeometry(100,17,100,20)
+        fcfa_choice.setStyleSheet("background:transparent;font-size:10px;")
+        groupRadio.setFixedHeight(250)
+        groupRadio.setStyleSheet("background:transparent")
+        
+        
+        
+        # Créer le QGroupBox pour contenir les boutons radio
+        groupRadio2 = QGroupBox("Status Frais Transaction/AM",three_frame_top)
+        # Créer les QRadioButton pour les options de devises
+        applique_choice = QRadioButton("Avec Frais",groupRadio2)
+        noapplique_choice = QRadioButton("Sans Frais",groupRadio2)
+        applique_choice.setStyleSheet("background:transparent;font-size:10px;")
+        noapplique_choice.setStyleSheet("background:transparent;font-size:10px;")
+        # Ajouter les QRadioButton au QGroupBox
+        applique_choice.setChecked(True)
+        applique_choice.setGeometry(5,17,100,20)
+        noapplique_choice.setGeometry(95,17,100,20)
+        groupRadio2.setFixedHeight(250)
+        groupRadio2.setStyleSheet("background:transparent")
+        
+        
+        
+        
+        nature_transaction = QComboBox(one_frame_top)
+        nature_transaction.setFixedHeight(30)
+        nature_transaction.setStyleSheet("background-color:#2E2E2E;border-radius:0px;")
+        pays_emission = QComboBox(one_frame_top)
+        pays_emission.setFixedHeight(30) 
+        pays_emission.setStyleSheet("background-color:#2E2E2E;border-radius:0px;")
+        methode_paiement = QComboBox(one_frame_top)
+        methode_paiement.setFixedHeight(30)
+        methode_paiement.setStyleSheet("background-color:#2E2E2E;border-radius:0px;")
+        BP = QLabel(f"BP: {code_BP}",one_frame_top)
+        BP.setStyleSheet("background:transparent")
+        AG = QLabel(f"Agence: {AGENT}",one_frame_top)
+        AG.setStyleSheet("background:transparent")
+        
+        nature_transaction.addItems(nature_transaction_liste)
+        pays_emission.addItems(pays_emission_liste)
+        methode_paiement.addItems(methode_paiement_liste )
+        
+        BP.setGeometry(12,5,100,30)
+        AG.setGeometry(12,35,100,30)
+        groupRadio.setGeometry(5,175,175,30)
+        groupRadio2.setGeometry(5,175,175,30)
+        nature_transaction.setGeometry(12,65,148,30)
+        pays_emission.setGeometry(12,100,148,30)
+        methode_paiement.setGeometry(12,135,148,30)
+        
+        
+        
+        two_frame_top = QWidget()
+        two_frame_top_layout = QVBoxLayout()
+        
+        client_emetteur = QLabel("Emetteur Transaction")
+        self.emetteur = QLineEdit()
+        self.emetteur.setPlaceholderText("(indicatif)telephone/nom emetteur")
+        self.emetteur.setFixedHeight(30)
+        self.emetteur.setStyleSheet("background-color:#2E2E2E;padding-left:12px;")
+        client_recepteur = QLabel("Recepteur Transaction")
+        self.recepteur =  QLineEdit()
+        self.recepteur.setPlaceholderText("(indicatif)telephone/nom recepteur")
+        self.recepteur.setFixedHeight(30)
+        self.recepteur.setStyleSheet("background-color:#2E2E2E;padding-left:12px;")
+        client_solde = QLabel("Solde Transaction")
+        self.solde =  QLineEdit()
+        self.solde.setPlaceholderText("Montant de transaction")
+        self.solde.setFixedHeight(30)
+        self.solde.setStyleSheet("background-color:#2E2E2E;padding-left:12px;")
+        
+        code_Agent = QLabel(f"{AG_AM}")
+        code_Agent.setStyleSheet("margin-left:50px;font-size:24px;")
+        
+        valide_transaction = QPushButton("Generer Facture")
+        valide_transaction.setFixedHeight(30)
+        valide_transaction.clicked.connect(self.clicked_genereted_facture)
+        valide_transaction.setStyleSheet("background-color:green;")
+        
+        
+        two_frame_top_layout.addWidget(client_emetteur)
+        two_frame_top_layout.addWidget(self.emetteur)
+        two_frame_top_layout.addWidget(client_recepteur)
+        two_frame_top_layout.addWidget(self.recepteur)
+        two_frame_top_layout.addWidget(client_solde)
+        two_frame_top_layout.addWidget(self.solde)
+        two_frame_top_layout.addWidget(code_Agent)
+        two_frame_top_layout.addWidget(valide_transaction)
+        two_frame_top.setLayout(two_frame_top_layout)
+        
+        
+        top_pan_layout.addWidget(one_frame_top)
+        top_pan_layout.addWidget(two_frame_top)
+        top_pan_layout.addWidget(three_frame_top)
+        top_pan.setLayout(top_pan_layout)
+        
+        
+        
+        bottom_pan = QWidget()
+        bottom_pan.setStyleSheet("background-color:#3D3D3D;border-radius:12px;")
+        winleft_layout.addWidget(top_pan)
+        winleft_layout.addWidget(bottom_pan)
+        winleft.setLayout(winleft_layout)
+        
+        
+        
+        winright = QWidget()
+        self.facture_view = QTextEdit(winright)
+        self.info_facture = """
+                            Résumé de transaction
+        --------------------------------------------------
+                                    AryadMoney
+            
+        Facture N°: {numero_facture}
+        Date: {date}
+        --------------------------------------------------
+        Emetteur:
+        Nom du client: {emetteur_nom}
+        Adresse du client: {emetteur_adresse}
+        Email du client: {emetteur_recepteur}
+        Téléphone du client: {telephone_emetteur}
+        --------------------------------------------------
+        Sous-Total: {argent}
+        Frais de Service: {frais_argent}
+        Total à Payer: {total_argent}
+        --------------------------------------------------
+                     Merci pour votre confiance !
+        --------------------------------------------------
+                                 Net à recevoir
+                                        {net_recu}
+        --------------------------------------------------
+        Recepteur:
+        Nom du client: {client_nom}
+        Adresse du client: {client_adresse}
+        Email du client: {client_email}
+        Téléphone du client: {client_recepteur}
+        --------------------------------------------------
+        Contactez-Nous:
+        Adresse de contact: {ADDC}
+        Téléphone de contact: {PHONE}
+        Email de contact: {EMAIL}
+"""
+        
+        self.facture_view.setText(self.info_facture)
+        self.update_facture()
+        self.facture_view.setReadOnly(True)
+        self.facture_view.setStyleSheet("background-color:white;color:black;")
+        self.facture_view.setGeometry(0,0,300,564)
+        winright.setFixedWidth(300)
+        winright.setStyleSheet("background-color:#3D3D3D;border-radius:12px;")
+        
+        layout_transaction.addWidget(winleft)
+        layout_transaction.addWidget(winright)
+        # Définir le layout principal pour le panel
         panel_transaction.setLayout(layout_transaction)
         panel_transaction.setStyleSheet("background-color:#2E2E2E;")
-        self.replace_widget(self.old_wid,panel_transaction)
+        # Remplacer l'ancien widget par le nouveau panel_transaction
+        self.replace_widget(self.old_wid, panel_transaction)
+
 
     def replace_widget(self,old_wid,new_wid):
         self.old_wid = new_wid
@@ -343,8 +528,8 @@ class Frame1(QWidget):
         self.selected = win
         
     def declaration(self,code):
-        self.title = QLabel("AryadMoney")
-        self.title.setStyleSheet("font-size:18px;font:bold;color:qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0#FFB74B,stop:1#32A528)")
+        self.titlecomp = QLabel("AryadMoney")
+        self.titlecomp.setStyleSheet("font-size:18px;font:bold;color:qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0#FFB74B,stop:1#32A528)")
         
         self.topcentralpan()
         self.centrepan(code)
@@ -405,7 +590,7 @@ class Frame1(QWidget):
         w3.setLayout(lay_out2)
         
         top_lauout =QHBoxLayout()
-        top_lauout.addWidget(self.title) 
+        top_lauout.addWidget(self.titlecomp) 
         top_lauout.addWidget(w1)
         top_lauout.addWidget(w2)
         top_lauout.addWidget(w3)
@@ -555,35 +740,42 @@ class Frame1(QWidget):
         frame_rescent = QWidget()
         frame_layout = QVBoxLayout()
         Historiques = get_all_historique(self.code_user)
-        deviseA,deviseB="MAD","FCFA"
-        
+        deviseA, deviseB = "MAD", "FCFA"
+
         for elmt in Historiques:
-             # Convertir en objet datetime
+            # Convertir en objet datetime
             datetime_obj = datetime.fromisoformat(elmt["date_transaction"])
             # Extraire la date uniquement
             date_only = datetime_obj.date()
-            if(date_only==datetime.now().date()):
+            
+            if date_only == datetime.now().date():
                 t = QWidget()
                 t_layout = QHBoxLayout()
+
                 i = QLabel()
                 i.setStyleSheet("background:#2E2E2E;border-radius:15px;")
+                i.setAlignment(Qt.AlignCenter)
+                i.setFixedSize(32, 32)
+
+                j = QLabel()
+                k = QLabel()
+
                 if elmt["nature_transaction"] == "depot":
-                    i.setPixmap(QPixmap(r"Frames\icons\190.png").scaled(20,20))
-                    j = QLabel("Depot")
-                    k = QLabel(f"+{deviseA}{elmt["solde_transaction"]}")
-                if elmt["nature_transaction"] == "retrait":
-                    i.setPixmap(QPixmap(r"Frames\icons\17.png").scaled(20,20))
-                    j = QLabel("Retrait")
-                    k = QLabel(f"-{deviseB}{elmt["solde_transaction"]}")
-    
-            i.setAlignment(Qt.AlignCenter)
-            i.setFixedSize(32,32)
-            t_layout.addWidget(i)
-            t_layout.addWidget(j)
-            t_layout.addWidget(k)
-            t.setLayout(t_layout)
-            t.setFixedSize(160,50)
-            frame_layout.addWidget(t)
+                    i.setPixmap(QPixmap(r"Frames\icons\190.png").scaled(20, 20))
+                    j.setText("Depot")
+                    k.setText(f"+{deviseA} {elmt['solde_transaction']}")
+                elif elmt["nature_transaction"] == "retrait":
+                    i.setPixmap(QPixmap(r"Frames\icons\17.png").scaled(20, 20))
+                    j.setText("Retrait")
+                    k.setText(f"-{deviseB} {elmt['solde_transaction']}")
+
+                t_layout.addWidget(i)
+                t_layout.addWidget(j)
+                t_layout.addWidget(k)
+                t.setLayout(t_layout)
+                t.setFixedSize(160, 50)
+                frame_layout.addWidget(t)
+        
         frame_rescent.setLayout(frame_layout)
         frame_scroll.setWidget(frame_rescent)
         frame_scroll.setGeometry(0,30,181,200)
@@ -611,16 +803,27 @@ class Frame1(QWidget):
         if Historiques:  # Vérifier si la liste des historiques n'est pas vide
             for histo in Historiques:
                 h1 = QWidget()
-                icon = QLabel("icon")
-                
+                icon = QLabel("")
+                icon.setAlignment(Qt.AlignCenter)
+                icon.setFixedSize(32,32)
+                icon.setStyleSheet("background:#2E2E2E;border-radius:15px;border:transparent;")
+                if histo["nature_transaction"] == "depot":
+                    icon.setPixmap(QPixmap(r"Frames\icons\190.png").scaled(20,20))
+                   
+                if histo["nature_transaction"] == "retrait":
+                    icon.setPixmap(QPixmap(r"Frames\icons\17.png").scaled(20,20))
+                   
                 # Assurez-vous que les clés existent et que les données sont correctement formatées
                 emetteur_id = QLabel(str(histo.get("emetteur_id", "Inconnu")))
+                emetteur_id.setStyleSheet("background-color:transparent;border:transparent;")
                 date = QLabel(str(histo.get("date_transaction", "Date inconnue")))
+                date.setStyleSheet("background-color:transparent;border:transparent;")
                 argent = QLabel(str(histo.get("solde_transaction", "0.0")))
+                argent.setStyleSheet("background-color:transparent;border:transparent;")
                 nature = QLabel(histo.get("nature_transaction", "Nature inconnue"))
+                nature.setStyleSheet("background-color:transparent;border:transparent;")
             
-                icon.setFixedSize(30,30)
-                icon.setStyleSheet("background-color:red;border-radius:12px;")
+                
                 layout_pan_histo = QHBoxLayout()
                 layout_pan_histo.addWidget(icon)
 
@@ -629,7 +832,7 @@ class Frame1(QWidget):
                 layout_pan_histo.addWidget(argent)
                 layout_pan_histo.addWidget(nature)
 
-                h1.setStyleSheet("background-color:black;border:1px solid blue;border-radius:0px")
+                h1.setStyleSheet("background-color:black;border-bottom:1px solid blue;border-radius:0px")
                 h1.setFixedHeight(50)
                 h1.setLayout(layout_pan_histo)
                 slide_historique_layout.addWidget(h1)
@@ -649,3 +852,72 @@ class Frame1(QWidget):
         # Joindre les morceaux avec un espace
         formatted_number = ' '.join(chunks)
         return formatted_number
+    
+    def update_facture(self,numero_facture_="",
+            date_="",
+            emetteur_nom_="",
+            emetteur_adresse_="",
+            emetteur_recepteur_="",
+            telephone_emetteur_="",
+            argent_="",
+            frais_argent_="",
+            total_argent_="",
+            net_recu_ = "",
+            client_nom_ = "",
+            client_adresse_ = "",
+            client_email_ = "",
+            client_recepteur_ = "",
+            ADDC_=ADDC,
+            PHONE_=PHONE,
+            EMAIL_=EMAIL):
+        # Replace placeholders with actual data
+        info_facture_filled = self.info_facture.format(
+            numero_facture=numero_facture_,
+            date=date_,
+            emetteur_nom=emetteur_nom_,
+            emetteur_adresse=emetteur_adresse_,
+            emetteur_recepteur=emetteur_recepteur_,
+            telephone_emetteur=telephone_emetteur_,
+            argent=argent_,
+            frais_argent=frais_argent_,
+            total_argent=total_argent_,
+            net_recu = net_recu_,
+            client_nom = client_nom_,
+            client_adresse = client_adresse_,
+            client_email = client_email_,
+            client_recepteur = client_recepteur_,
+            ADDC= ADDC_,
+            PHONE= PHONE_,
+            EMAIL= EMAIL_)
+        self.facture_view.setText(info_facture_filled)
+        
+    def clicked_genereted_facture(self):
+        # Séparation de la chaîne en deux parties : numéro de téléphone et nom
+        phone_numberE, nameE = self.emetteur.text().split('/')
+        phone_numberR, nameR = self.recepteur.text().split('/')
+        # Suppression des espaces inutiles autour des éléments
+        phone_numberE = phone_numberE.strip()
+        nameE = nameE.strip()
+        phone_numberR = phone_numberR.strip()
+        nameR = nameR.strip()
+        
+        numero_facture=""
+        date= str(datetime.now().date())
+        emetteur_nom= nameE
+        emetteur_adresse=""
+        emetteur_recepteur=""
+        telephone_emetteur=phone_numberE
+        argent= self.solde.text().strip()
+        frais_argent=""
+        total_argent=""
+        net_recu = ""
+        client_nom = nameR
+        client_adresse = ""
+        client_email = ""
+        client_recepteur = phone_numberR
+        
+        
+        
+        self.update_facture(date_=date,emetteur_nom_=emetteur_nom,telephone_emetteur_=telephone_emetteur,
+                            argent_=argent,client_nom_=client_nom,client_recepteur_=client_recepteur)
+
