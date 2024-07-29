@@ -5,6 +5,7 @@ from datetime import datetime
 import locale
 from settings import *
 from operatings import *
+import re
 
 class History(QWidget):
     def __init__(self) -> None:
@@ -407,12 +408,12 @@ class Frame1(QWidget):
         
         client_emetteur = QLabel("Emetteur Transaction")
         self.emetteur = QLineEdit()
-        self.emetteur.setPlaceholderText("(indicatif)telephone/nom emetteur")
+        self.emetteur.setPlaceholderText("indicatif/telephone/nom emetteur")
         self.emetteur.setFixedHeight(30)
         self.emetteur.setStyleSheet("background-color:#2E2E2E;padding-left:12px;")
         client_recepteur = QLabel("Recepteur Transaction")
         self.recepteur =  QLineEdit()
-        self.recepteur.setPlaceholderText("(indicatif)telephone/nom recepteur")
+        self.recepteur.setPlaceholderText("indicatif/telephone/nom recepteur")
         self.recepteur.setFixedHeight(30)
         self.recepteur.setStyleSheet("background-color:#2E2E2E;padding-left:12px;")
         client_solde = QLabel("Solde Transaction")
@@ -890,34 +891,86 @@ class Frame1(QWidget):
             PHONE= PHONE_,
             EMAIL= EMAIL_)
         self.facture_view.setText(info_facture_filled)
-        
-    def clicked_genereted_facture(self):
-        # Séparation de la chaîne en deux parties : numéro de téléphone et nom
-        phone_numberE, nameE = self.emetteur.text().split('/')
-        phone_numberR, nameR = self.recepteur.text().split('/')
-        # Suppression des espaces inutiles autour des éléments
-        phone_numberE = phone_numberE.strip()
-        nameE = nameE.strip()
-        phone_numberR = phone_numberR.strip()
-        nameR = nameR.strip()
-        
-        numero_facture=""
-        date= str(datetime.now().date())
-        emetteur_nom= nameE
-        emetteur_adresse=""
-        emetteur_recepteur=""
-        telephone_emetteur=phone_numberE
-        argent= self.solde.text().strip()
-        frais_argent=""
-        total_argent=""
-        net_recu = ""
-        client_nom = nameR
-        client_adresse = ""
-        client_email = ""
-        client_recepteur = phone_numberR
-        
-        
-        
-        self.update_facture(date_=date,emetteur_nom_=emetteur_nom,telephone_emetteur_=telephone_emetteur,
-                            argent_=argent,client_nom_=client_nom,client_recepteur_=client_recepteur)
+    
+    
 
+    def is_valid_phone_number(self,phone_number):
+        # Définir le motif pour un numéro de téléphone international ou national
+        pattern = r"^\+?\d{1,3}[- ]?\d{1,4}[- ]?\d{3,4}[- ]?\d{4}$"
+        # Utiliser re.match pour vérifier si la chaîne correspond au motif
+        return re.match(pattern, phone_number) is not None
+            
+    def clicked_genereted_facture(self):
+        
+        if self.emetteur.text().strip() != "" and self.recepteur.text().strip()!="" and self.solde.text().strip()!="":
+            # Vérification et séparation pour l'émetteur
+            if self.emetteur.text().count("/") != 2 or self.recepteur.text().count("/") != 2:
+                if self.recepteur.text().count("/") != 2:
+                    self.show_message("Error","Informations du récepteur invalid\n format: (indicatif/numero/nom complet)")
+                if self.emetteur.text().count("/") != 2:
+                    self.show_message("Error","Informations de l'émetteur invalid\n format: (indicatif/numero/nom complet)")
+                else:
+                    self.show_message("Echec","Remplissez correctement les champs")
+            else:
+                indiceE, phone_numberE, nameE = self.emetteur.text().split('/')
+                indiceR, phone_numberR, nameR = self.recepteur.text().split('/')
+                
+                indices = ["+241","+212"]
+                
+
+                if indiceE!="" and phone_numberE!="" and nameE!="" and  indiceR!="" and phone_numberR!="" and nameR!="":
+                    if (indiceR not in indices or self.is_valid_phone_number(phone_numberR)!=True) or (indiceE not in indices or self.is_valid_phone_number(phone_numberE)!=True):
+                        if indiceR not in indices or self.is_valid_phone_number(phone_numberR)!=True :
+                            if indiceR not in indices:
+                                self.show_message("Error","indicatif recepteur incorect ")
+                            elif self.is_valid_phone_number(phone_numberR)!=True:
+                                self.show_message("Error","Numero recepteur invalid ")
+                            else:
+                                self.show_message("Error","informations recepteur invalid ")
+                        elif indiceE not in indices or self.is_valid_phone_number(phone_numberE)!=True:
+                            if indiceE not in indices:
+                                self.show_message("Error","indicatif emetteur incorect ")
+                            elif self.is_valid_phone_number(phone_numberE)!=True:
+                                self.show_message("Error","Numero emetteur invalid ")
+                            else:
+                                self.show_message("Error","informations emetteur invalid ")
+                        elif indiceR not in indices and indiceE not in indices:
+                            self.show_message("Error","indicatifs incorects ")         
+                    else:
+                        # Suppression des espaces inutiles autour des éléments
+                        phone_numberE = f"{indiceE.strip()} {phone_numberE.strip()}"
+                        nameE = nameE.strip()
+                        phone_numberR = f"{indiceR.strip()} {phone_numberR.strip()}"
+                        nameR = nameR.strip()
+                        devise = "MAD" if indiceE.strip()=="+212" else "FCFA"
+                        
+                        numero_facture=""
+                        date= str(datetime.now())
+                        emetteur_nom= nameE
+                        emetteur_adresse=""
+                        emetteur_recepteur=""
+                        telephone_emetteur=phone_numberE
+                        argent= self.solde.text().strip()+" "+devise
+                        frais_argent=""
+                        total_argent=""
+                        net_recu = ""
+                        client_nom = nameR
+                        client_adresse = ""
+                        client_email = ""
+                        client_recepteur = phone_numberR
+                        
+                        
+                        
+                        self.update_facture(date_=date,emetteur_nom_=emetteur_nom,telephone_emetteur_=telephone_emetteur,
+                                        argent_=argent,client_nom_=client_nom,client_recepteur_=client_recepteur)
+                else:
+                    self.show_message("Echec","Remplissez correctement les champs suivant le format")
+        else:
+            self.show_message("Echec","Remplissez tous les champs")
+        
+    def show_message(self,titre,message):
+        msgBox = QMessageBox()
+        msgBox.setWindowTitle(titre)
+        msgBox.setStyleSheet("background-color:#5B4040;color:#FF6B4B;")
+        msgBox.setText(message)
+        msgBox.exec()
