@@ -93,15 +93,19 @@ class Login(QWidget):
             name = self.l1.text()
             pswd = self.l2.text()
             if name!="" and pswd!="":
-                token,droit = login(name,pswd)
-                if token is not None and droit == "SuperAdmin":
-                    f = Frame1(token)
-                    print("code reçu",token,"label reçu",droit,"\n")
+                check= login(name,pswd)
+                type_user= check["type_user"]
+                user_id = check["user_id"]
+                if type_user == "SuperAdmin":
+                    f = Frame1(user_id,name)
+                    print("code reçu",user_id,"label reçu",type_user,"\n")
                     self.parent.setframe(f)
                 else:
                     self.show_message("ERROR","Mot de passe ou nom d'utilisateur incorrect")
             else:
                 self.show_message("ERROR","Remplissez tous les champs")
+
+
 
 
     def on_link_clicked(self):

@@ -6,6 +6,9 @@ import locale
 from settings import *
 from operatings import *
 import re
+import secrets
+import string
+import random
 
 class History(QWidget):
     def __init__(self) -> None:
@@ -13,13 +16,14 @@ class History(QWidget):
 
 
 class Frame1(QWidget):
-    def __init__(self,code_user) -> None:
+    def __init__(self,code_user,name) -> None:
         super().__init__()
         self.infoapk = commandes
         self.setStyleSheet("background-color:#2E2E2E;")
         self.setFixedSize(1200, 600)
         self.declaration(code_user)
         self.layout = QHBoxLayout()
+        self.nameuserconnect = name
         self.lateral()
         self.central()
         self.setLayout(self.layout)
@@ -44,15 +48,25 @@ class Frame1(QWidget):
         logo = QLabel(w1)
         logo.setPixmap(QPixmap(r"Frames\icons\logo.png").scaled(30,26))
         logo.setGeometry(10,8,30,25)
-        logo.setStyleSheet("background-color:blue;")
+       
         
-        name_logo = QLabel(str(self.infoapk["name_companie"]),w1)
-        name_logo.setGeometry(55,8,150,25)
-        name_logo.setStyleSheet("font-size:16px;font:bold;color:qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0#FFB74B,stop:1#32A528)")
-        
+        name_logoU = QLabel("AryadMoney", w1)
+        name_logoU.setGeometry(55, 8, 150, 25)
+        name_logoU.setStyleSheet("font-size:18px;font:bold;color:#808080;")
+
         w1.setFixedHeight(40)
         w1.setStyleSheet("background-color:#2E2E2E;")
         w2 = QWidget()
+        logow2 = QLabel(w2)
+        logow2.setStyleSheet("border:0px;")
+        logow2.setPixmap(QPixmap(r"Frames\icons\user_1077114.png").scaled(24,24))
+        logow2.setGeometry(10,8,24,24)
+        
+        unc = QLabel(w2)
+        unc.setText(f'<span>~</span>Bonjour,{self.nameuserconnect}<span>~</span>')
+        unc.setGeometry(55,8,230,24)
+        unc.setStyleSheet("font:bold;")
+        
         w2.setFixedHeight(40)
         w2.setStyleSheet("background-color:#2E2E2E;")
         layout2.addWidget(w1)
@@ -60,7 +74,7 @@ class Frame1(QWidget):
 
         box1.setLayout(layout2)
         box1.setFixedHeight(100)
-        box1.setStyleSheet("background-color:yellow;")
+        
 
         box2 = QWidget()
         box2.setFixedHeight(250)
@@ -221,14 +235,22 @@ class Frame1(QWidget):
 
         tit_hit = QLabel("Historique Transaction")
         tit_hit.setStyleSheet("font-size:22px;font:bold;margin-left:10px;")
-    
+        
         choice_wid = QWidget()
         choice_wid.setFixedWidth(170)
         choice_lay = QHBoxLayout()
 
         alltext = QPushButton("All")
-        depotext = QPushButton("Depot")
+        alltext.setStyleSheet("color:red;")
+        
+        alltext.clicked.connect(self.historiquerall)
+        
+        depotext = QPushButton("Envoie")
+        depotext.clicked.connect(self.historiquesend)
+        
         retrait = QPushButton("Retrait")
+        retrait.clicked.connect(self.historiqueretrait)
+        
         alltext.setStyleSheet("background-color:transparent;font-size:16px;")
         depotext.setStyleSheet("background-color:transparent;font-size:16px;")
         retrait.setStyleSheet("background-color:transparent;font-size:16px;")
@@ -242,7 +264,7 @@ class Frame1(QWidget):
 
         titles_layout = QHBoxLayout()
         titles_win = QWidget(view_historique)
-        liste = ["Nature Transaction","Date Transaction","Solde Transaction","Emetteur","Recepteur","Methode Paiement","Pays Emission"]
+        liste = ["Nature Transaction","Date Transaction","Solde Transaction","Emetteur","Recepteur","Frais Transaction","Pays Emission"]
         for i in liste:
             l = QLabel(i)
             l.setStyleSheet("font:bold;font-size:10px;")
@@ -251,41 +273,16 @@ class Frame1(QWidget):
         titles_win.setGeometry(20,0,910,40)
 
         view_historique.setFixedHeight(380)
-        History_scrolarea = QScrollArea(view_historique)
-        frame_tab = QWidget()
-        frame_tab_layout = QVBoxLayout()
-        Historiques = get_all_historique(self.code_user)
+        self.History_scrolarea = QScrollArea(view_historique)
         
-        for histo in Historiques:
-            win_orientation = QHBoxLayout()
-             # Créer des QLabel pour chaque champ de l'historique
-            Nature_Transaction = QLabel(histo["nature_transaction"])
-            Date_Transaction = QLabel(histo["date_transaction"])
-            Solde_Transaction = QLabel(str(histo["solde_transaction"]))
-            Emetteur = QLabel(str(histo["emetteur_id"]))
-            Recepteur = QLabel(str(histo["recepteur_id"]))
-            Methode_Paiement = QLabel(histo["methode_paiement"])
-            Pays_Emission = QLabel(histo["pays_emission"])
-            
-            win_orientation.addWidget(Nature_Transaction)
-            win_orientation.addWidget(Date_Transaction)
-            win_orientation.addWidget(Solde_Transaction)
-            win_orientation.addWidget(Emetteur)
-            win_orientation.addWidget(Recepteur)
-            win_orientation.addWidget(Methode_Paiement)
-            win_orientation.addWidget(Pays_Emission)
-            win = QWidget()
-            win.setLayout(win_orientation)
-            win.setFixedHeight(50)
-            win.setStyleSheet("background:red;margin-bottom:1px;border-radius:0px;")
-            frame_tab_layout.addWidget(win)
+        tab_fram= self.chargeHistorique() 
 
-        frame_tab.setLayout(frame_tab_layout)
-        History_scrolarea.setWidget(frame_tab)
-        History_scrolarea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        History_scrolarea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        History_scrolarea.setWidgetResizable(True)
-        History_scrolarea.setGeometry(10,39,910,330)
+        self.History_scrolarea.setWidget(tab_fram)
+        self.History_scrolarea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.History_scrolarea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.History_scrolarea.setWidgetResizable(True)
+        self.History_scrolarea.setGeometry(10,39,910,330)
+        
         view_historique.setStyleSheet("background:#3D3D3D;border-radius:15px;")
         layout_transaction.addWidget(panel_top)
         layout_transaction.addWidget(tit_hit)
@@ -295,6 +292,25 @@ class Frame1(QWidget):
         panel_transaction.setStyleSheet("background-color: #2E2E2E;")
         self.replace_widget(self.old_wid,panel_transaction)
     
+    def historiquesend(self):
+        self.updateHistoryView("envoie")
+       
+    def historiqueretrait(self):
+        self.updateHistoryView("retrait")
+       
+    def historiquerall(self):
+        self.updateHistoryView("All")
+       
+    def updateHistoryView(self, vue):
+        if vue=="All":
+            tab_fram = self.chargeHistorique()
+            self.History_scrolarea.setWidget(tab_fram)
+            print(f"{vue} historique")
+        else:      
+            tab_fram = self.chargeHistorique2(vue)
+            self.History_scrolarea.setWidget(tab_fram)
+            print(f"{vue} historique")
+
     def Acceuil(self):
         self.selectionOption(self.b1)
         self.replace_widget(self.old_wid,self.panel_central)
@@ -311,12 +327,425 @@ class Frame1(QWidget):
     def cardpanel(self):
         self.selectionOption(self.b3)
         panel_transaction = QWidget()
-        layout_transaction =QVBoxLayout()
-        layout_transaction.addWidget(QWidget())
+        layout_transaction =QHBoxLayout()
+        
+        
+        vleft = QWidget()
+        vleft.setFixedWidth(300)
+        vleftlayout = QVBoxLayout()
+        
+        labnom = QLabel()
+        labnom.setText('<span style="color:red;">*</span><span style="color:white;"> Nom</span>')
+        self.balncelft1 = QLineEdit(vleft)
+        self.balncelft1.setStyleSheet("border-radius:4px;background-color:#ffffff;padding-left:12px;color:black;")
+        self.balncelft1.setPlaceholderText("Nom")
+        self.balncelft1.setFixedHeight(30)
+        
+        labprenom = QLabel()
+        labprenom.setText('<span style="color:red;">*</span><span style="color:white;"> Prenom</span>')
+        self.balncelft2 = QLineEdit(vleft)
+        self.balncelft2.setStyleSheet("border-radius:4px;background-color:#ffffff;padding-left:12px;color:black;")
+        self.balncelft2.setPlaceholderText("Prenom")
+        self.balncelft2.setFixedHeight(30)
+        
+        labpays = QLabel()
+        labpays.setText('<span style="color:red;">*</span><span style="color:white;"> Pays</span>')
+        self.balncelft3 = QLineEdit(vleft)
+        self.balncelft3.setStyleSheet("border-radius:4px;background-color:#ffffff;padding-left:12px;color:black;")
+        self.balncelft3.setPlaceholderText("Pays")
+        self.balncelft3.setFixedHeight(30)
+        
+        labville = QLabel()
+        labville.setText('<span style="color:red;">*</span><span style="color:white;"> Ville</span>')
+        self.balncelft4 = QLineEdit(vleft)
+        self.balncelft4.setStyleSheet("border-radius:4px;background-color:#ffffff;padding-left:12px;color:black;")
+        self.balncelft4.setPlaceholderText("Ville")
+        self.balncelft4.setFixedHeight(30)
+        
+        labcni = QLabel()
+        labcni.setText('<span style="color:red;">*</span><span style="color:white;"> CNI</span>')
+        self.balncelft5 = QLineEdit(vleft)
+        self.balncelft5.setStyleSheet("border-radius:4px;background-color:#ffffff;padding-left:12px;color:black;")
+        self.balncelft5.setPlaceholderText("CNI")
+        self.balncelft5.setFixedHeight(30)
+       
+        labphone = QLabel()
+        labphone.setText('<span style="color:red;">*</span><span style="color:white;"> Telephone</span>')
+        self.balncelft6 = QLineEdit(vleft)
+        self.balncelft6.setStyleSheet("border-radius:4px;background-color:#ffffff;padding-left:12px;color:black;")
+        self.balncelft6.setPlaceholderText("Telephone")
+        self.balncelft6.setFixedHeight(30)
+        
+        labemail = QLabel()
+        labemail.setText('<span style="color:red;">*</span><span style="color:white;"> Email</span>')
+        self.balncelft7 = QLineEdit(vleft)
+        self.balncelft7.setStyleSheet("border-radius:4px;background-color:#ffffff;padding-left:12px;color:black;")
+        self.balncelft7.setPlaceholderText("Email")
+        self.balncelft7.setFixedHeight(30)
+        
+        inf = QLabel("Informations de l'utilisateur")
+        inf.setStyleSheet("margin-left:60px;margin-bottom:5px;font:bold;")
+        vleftlayout.addWidget(inf)
+        vleftlayout.addWidget(labnom)
+        vleftlayout.addWidget(self.balncelft1)
+        vleftlayout.addWidget(labprenom)
+        vleftlayout.addWidget(self.balncelft2)
+        vleftlayout.addWidget(labpays)
+        vleftlayout.addWidget(self.balncelft3)
+        vleftlayout.addWidget(labville)
+        vleftlayout.addWidget(self.balncelft4)
+        vleftlayout.addWidget(labcni)
+        vleftlayout.addWidget(self.balncelft5)
+        vleftlayout.addWidget(labphone)
+        vleftlayout.addWidget(self.balncelft6)
+        vleftlayout.addWidget(labemail)
+        vleftlayout.addWidget(self.balncelft7)
+        vleft.setLayout(vleftlayout)
+        vleft.setStyleSheet("background-color:#3D3D3D;border-radius:15px")
+        layout_transaction.addWidget(vleft)
+        
+        vright = QWidget()
+        vright.setStyleSheet("background-color:#3D3D3D;border-radius:15px")
+       
+        saveclient = QPushButton("Enregistrer client", vright)
+        iconsc = QIcon(QPixmap(r"Frames\icons\add-friend_2198124.png"))
+        saveclient.setIcon(iconsc)
+        saveclient.clicked.connect(self.createuser)
+        saveclient.setStyleSheet("background-color:#4BFFB3;border-radius:4px;color:black;font:bold;")
+        saveclient.setGeometry(5,525,150,30)
+        
+        createcard = QPushButton("Créer compte MAD",vright)
+        iconcc = QIcon(QPixmap(r"Frames\icons\business_16576723.png"))
+        createcard.setIcon(iconcc)
+        createcard.clicked.connect(self.createmadaccount)
+        createcard.setStyleSheet("background-color:#4BFFB3;border-radius:4px;color:black;font:bold;")
+        createcard.setGeometry(159,525,150,30)
+        
+        createcardf = QPushButton("Créer compte FCFA",vright)
+        iconcc1 = QIcon(QPixmap(r"Frames\icons\business_16576723.png"))
+        createcardf.setIcon(iconcc1)
+        createcardf.clicked.connect(self.createfcfaaccount)
+        createcardf.setStyleSheet("background-color:#4BFFB3;border-radius:4px;color:black;font:bold;")
+        createcardf.setGeometry(313,525,150,30)
+        
+        grdh = QGroupBox("création de compte MAD",vright)
+        self.choix1 = QRadioButton("Actif",grdh)
+        choix2 = QRadioButton("Inactif",grdh)
+        choix2.setChecked(True)
+        grdh.setGeometry(10,10,300,150)
+        self.choix1.setGeometry(10,20,150,50)
+        choix2.setGeometry(80,20,150,50)
+        
+        grfcfa = QGroupBox("création de compte FCFA",vright)
+        self.choix1f = QRadioButton("Actif",grfcfa)
+        choix2f = QRadioButton("Inactif",grfcfa)
+        choix2f.setChecked(True)
+        grfcfa.setGeometry(200,10,300,150)
+        self.choix1f.setGeometry(10,20,150,50)
+        choix2f.setGeometry(80,20,150,50)
+        
+        view_mod = QLabel(vright)
+        view_mod.setGeometry(550,20,50,50)
+        view_mod.setPixmap(QPixmap(r"Frames\icons\connection_12061681.png").scaled(50,50))
+         
+        sec = QWidget(vright)
+        
+        usern = QLabel(sec)
+        usern.setText('<span style="color:red;">*</span><span style="color:white;"> Nom utilisateur</span>')
+        usern.setGeometry(10,50,230,30)
+        
+        self.username_sec = QComboBox(sec)
+        self.username_sec.setPlaceholderText("Nom utilisateur")
+        self.username_sec.setFixedHeight(30)
+        self.username_sec.setStyleSheet("background-color:#ffffff;color:black;padding-left:12px;border-radius:4px;")
+        self.getallusers(self.username_sec)
+        
+        labpass = QLabel(sec)
+        labpass.setText('<span style="color:red;">*</span><span style="color:white;"> Mot de passe</span>')
+        labpass.setGeometry(10,110,230,30)
+        
+        self.password_sec = QLineEdit(sec)
+        self.password_sec.setPlaceholderText("Mot de passe par defaut")
+        self.password_sec.setFixedHeight(30)
+        self.password_sec.setStyleSheet("background-color:#ffffff;color:black;padding-left:12px;border-radius:4px;")
+        
+        self.generated  = QCheckBox("Generer le mot de passe",sec)
+        self.generated.setGeometry(10,175,230,30)
+        self.generated.clicked.connect(self.genered)
+        
+        items = ["Doit d'accès","SuperAdmin","Admin","FL","Client"]
+        self.user_type_sec = QComboBox(sec)
+        self.user_type_sec.addItems(items)
+        self.user_type_sec.setPlaceholderText("Droit d'accès")
+        self.user_type_sec.setFixedHeight(30)
+        self.user_type_sec.setStyleSheet("background-color:#ffffff;color:black;padding-left:12px;border-radius:4px;")
+        
+        self.activation_code_sec = QLineEdit(sec)
+        self.activation_code_sec.setFixedHeight(30)
+        self.activation_code_sec.setPlaceholderText("Code d'activation")
+        self.activation_code_sec.setStyleSheet("background-color:#ffffff;color:black;padding-left:12px;border-radius:4px;")
+        
+        self.generated_code = QCheckBox("Generer code d'activation",sec)
+        self.generated_code.clicked.connect(self.generatednum)
+        
+        gpr = QGroupBox("status de securité du compte ",sec)
+        self.actifac = QRadioButton("Actif",sec)
+        self.inactifac = QRadioButton("Inactif",sec)
+        self.inactifac.setChecked(True)
+        gpr.setGeometry(0,340,230,30)
+        self.actifac.setGeometry(10,365,230,30)
+        self.inactifac.setGeometry(80,365,230,30)
+        
+        savacces = QPushButton("Enregistre permissions",vright)
+        icop = QIcon(QPixmap(r"Frames\icons\account_4291647.png"))
+        savacces.setIcon(icop)
+        savacces.clicked.connect(self.create_security_privilege)
+        savacces.setStyleSheet("background-color:#4BFFB3;border-radius:4px;color:black;font:bold;")
+        savacces.setGeometry(467,525,150,30)
+        
+        priv = QLabel("Privilèges utilisateur",sec)
+        priv.setStyleSheet("color:#ffffff;font:bold;")
+        priv.setGeometry(65,10,230,30)
+            
+        self.username_sec.setGeometry(10,80,230,30)
+        self.password_sec.setGeometry(10,140,230,30)
+        self.user_type_sec.setGeometry(10,210,230,30)
+        dt = QLabel(sec)
+        dt.setText('<span style="color:red;">*</span><span style="color:white;"> Code activation</span>')
+        dt.setStyleSheet("background-color:transparent;")
+        dt.setGeometry(10,240,230,30)
+        self.activation_code_sec.setGeometry(10,270,230,30)
+        self.generated_code.setGeometry(10,305,230,30)
+    
+        sec.setStyleSheet("background-color:#2E2E2E;")
+        sec.setGeometry(360,80,250,420)
+        
+        layout_transaction.addWidget(vright)
+        
         panel_transaction.setLayout(layout_transaction)
         panel_transaction.setStyleSheet("background-color:#2E2E2E;")
         self.replace_widget(self.old_wid,panel_transaction)
+        
+        card_view = QWidget(vright)
+        card_view.setStyleSheet("background: qlineargradient( x1: 0, y1: 0, x2: 1, y2: 1, stop:0#4BFF93,stop:1#32A528);")
+
+        puc = QLabel(card_view)
+        puc.setPixmap(QPixmap(r"Frames\icons\puce.png").scaled(47,37))
+        puc.setGeometry(45,80,47,37)
+
+        pp = QLabel(card_view)
+        pp.setPixmap(QPixmap(r"Frames\icons\ppu.png").scaled(32,32))
+        pp.setGeometry(10,82,32,32)
+        pp.setStyleSheet("background-color:transparent;")
+
+        self.nameuser1 = QComboBox(card_view)
+        self.nameuser1.setStyleSheet("font:bold;background-color:transparent;border-radius:0px;color:black;")
+        self.nameuser1.setPlaceholderText("Nom utilisateur")
+        self.nameuser1.setGeometry(170,10,150,30)
+        
+        self.id_card2  = QLabel("ID:",card_view)
+        self.id_card2.setStyleSheet("padding-left:6px;")
+        self.id_card2.setGeometry(10,160,30,30)
+        
+        lbcard2 = QLabel(card_view)
+        lbcard2.setGeometry(170,55,100,100)
+        lbcard2.setStyleSheet("background-color:transparent;")
+        lbcard2.setPixmap(QPixmap(r"Frames\icons\deposit_9334619.png").scaled(100,100))
+        
+        
+        self.view_id_card2 = QLineEdit(card_view)
+        self.view_id_card2.setEnabled(False)
+        self.view_id_card2.setStyleSheet("font-size:20px;border-radius:0px;background-color:transparent;color:#ffffff;padding-left:12px;font:bold;")
+        self.view_id_card2.setGeometry(30,160,230,30)
+        
+        card_view.setGeometry(10,80,340,200)
+        
+        
+        self.check_id_card = QCheckBox("Generer ID de la carte FCFA",vright)
+        self.check_id_card.setGeometry(20,281,340,19)
+        self.check_id_card.clicked.connect(self.generedIDFCFA)
+        
+        self.check_id_card2 = QCheckBox("Generer ID de la carte MAD",vright)
+        self.check_id_card2.setGeometry(20,503,340,19)
+        self.check_id_card2.clicked.connect(self.generedIDMAD)
+        
+        card_view1 = QWidget(vright)
+        card_view1.setStyleSheet("background: qlineargradient( x1: 0, y1: 0, x2: 1, y2: 1,  stop: 0 #284AA5, stop: 1 #4B7DFF);")
+
+        self.nameuser = QComboBox(card_view1)
+        self.nameuser.setStyleSheet("font:bold;background-color:transparent;border-radius:0px;color:black;")
+        self.nameuser.setPlaceholderText("Nom utilisateur")
+        self.nameuser.setGeometry(170,10,150,30)
+        
+        self.getallusers(self.nameuser)
+        self.getallusers(self.nameuser1)
+        
+        self.id_card1  = QLabel("ID:",card_view1)
+        self.id_card1.setStyleSheet("padding-left:6px;")
+        self.id_card1.setGeometry(10,160,30,30)
+        
+        puce2 = QLabel(card_view1)
+        puce2.setPixmap(QPixmap(r"Frames\icons\puce.png").scaled(47,37))
+        puce2.setGeometry(45,80,47,37)
+        
+        lbcard1 = QLabel(card_view1)
+        lbcard1.setGeometry(170,55,100,100)
+        lbcard1.setStyleSheet("background-color:transparent;")
+        lbcard1.setPixmap(QPixmap(r"Frames\icons\deposit_9334619.png").scaled(100,100))
+        
+
+        ppu = QLabel(card_view1)
+        ppu.setPixmap(QPixmap(r"Frames\icons\ppu.png").scaled(32,32))
+        ppu.setGeometry(10,82,32,32)
+        ppu.setStyleSheet("background-color:transparent;")
+        
+        self.view_id_card = QLineEdit(card_view1)
+        self.view_id_card.setEnabled(False)
+        self.view_id_card.setStyleSheet("font-size:20px;border-radius:0px;background-color:transparent;color:#ffffff;padding-left:12px;font:bold;")
+        self.view_id_card.setGeometry(30,160,230,30)
+        
+        card_view1.setGeometry(10,300,340,200)
+        
+        
+        
+        
+        
+    def create_security_privilege(self):
+        username = self.username_sec.currentText()
+        password = self.password_sec.text()
+        user_type = self.user_type_sec.currentText()
+        activation_code = self.activation_code_sec.text()
+        
+        name, firstname = username.split(" ")
+        print(name,firstname)
+        id_user = get_id_user(name, firstname)
+        
+        status = self.actifac.isChecked()
+        
+        if id_user is not None:
+            message = create_security(username, password, user_type, activation_code, id_user, status)
+            self.show_message("Privilèges", message if message else "Échec de l'attribution des privilèges")
+        else:
+            self.show_message("Erreur", "Utilisateur non trouvé")
+
+        # Correction de la méthode getallusers
+    def getallusers(self, combo: QComboBox):
+        combo.clear()
+        users = get_all_users(self.code_user)
+        print(users)
+        if(len(users)!=0):
+            combo.addItems(users)
     
+    def genered(self):
+        self.password_sec.setText(self.generate_unique_password())
+        self.generated.setChecked(False)
+        
+    def generedIDMAD(self):
+        data = self.nameuser.currentText()
+        if not data or data == "Nom utilisateur":
+            self.show_message("Génération ID de la carte", "Veuillez choisir un utilisateur avant de générer l'ID.")
+            self.check_id_card2.setChecked(False)
+        else:
+            try:
+                name, firstname = data.split(" ")
+                user_id = get_id_user(name, firstname)
+                card_code = self.generate_card_number("MAD", user_id)
+                self.view_id_card.setText(self.format_with_spaces(card_code, 4))
+                self.check_id_card2.setChecked(True)
+            except Exception as e:
+                self.show_message("Génération ID de la carte", f"Erreur lors de la génération de l'ID : {str(e)}")
+                self.check_id_card2.setChecked(False)
+
+    def generedIDFCFA(self):
+        data = self.nameuser1.currentText()
+        if not data or data == "Nom utilisateur":
+            self.show_message("Génération ID de la carte", "Veuillez choisir un utilisateur avant de générer l'ID.")
+            self.check_id_card.setChecked(False)
+        else:
+            try:
+                name, firstname = data.split(" ")
+                user_id = get_id_user(name, firstname)
+                card_code = self.generate_card_number("FCFA", user_id)
+                self.view_id_card2.setText(self.format_with_spaces(card_code, 4))
+                self.check_id_card.setChecked(True)
+            except Exception as e:
+                self.show_message("Génération ID de la carte", f"Erreur lors de la génération de l'ID : {str(e)}")
+                self.check_id_card.setChecked(False)
+
+    
+    def generatednum(self):
+        self.activation_code_sec.setText(self.generate_numeric_code())
+        self.generated_code.setChecked(False)
+
+    def generate_numeric_code(self,length: int = 8) -> str:
+        """Génère un code numérique aléatoire de la longueur spécifiée."""
+        code = ''.join(random.choice('0123456789') for _ in range(length))
+        return code
+        
+    def createuser(self):
+        nom = self.balncelft1.text()
+        prenom = self.balncelft2.text()
+        pays = self.balncelft3.text()
+        ville = self.balncelft4.text()
+        cni =  self.balncelft5.text()
+        phone = self.balncelft6.text()
+        email = self.balncelft7.text()
+        retour = create_user(nom,prenom,pays,phone,email,cni,ville)
+        self.getallusers(self.username_sec)
+        self.getallusers(self.nameuser)
+        self.getallusers(self.nameuser1)
+        self.show_message("creation utilisateur",retour)
+        self.balncelft1.setText("")
+        self.balncelft2.setText("")
+        self.balncelft3.setText("")
+        self.balncelft4.setText("")
+        self.balncelft5.setText("")
+        self.balncelft6.setText("")
+        self.balncelft7.setText("")
+        
+    def createmadaccount(self):
+        data = self.nameuser.currentText()
+        if data == "Nom utilisateur":
+            self.show_message("Création compte MAD", "Opération invalide : Veuillez sélectionner un utilisateur.")
+        else:
+            try:
+                name, firstname = data.split(" ")
+                id_user = get_id_user(name, firstname)
+                code = self.view_id_card.text().replace(" ", "")
+                status = self.choix1.isChecked()
+                message = create_new_account_mad(0.0, code, id_user, status)
+                
+                if not message:
+                    self.show_message("Création compte MAD", "Un compte existe déjà pour cet utilisateur.")
+                else:
+                    self.show_message("Création compte MAD", "Compte créé avec succès.")
+            
+            except Exception as e:
+                self.show_message("Création compte MAD", f"Erreur lors de la création du compte : {str(e)}")
+
+    def createfcfaaccount(self):
+        data = self.nameuser1.currentText()
+        if data == "Nom utilisateur":
+            self.show_message("Création compte FCFA", "Opération invalide : Veuillez sélectionner un utilisateur.")
+        else:
+            try:
+                name, firstname = data.split(" ")
+                id_user = get_id_user(name, firstname)
+                code = self.view_id_card2.text().replace(" ", "")
+                status = self.choix1f.isChecked()
+                message = create_new_account_fcfa(0.0, code, id_user, status)
+                
+                if not message:
+                    self.show_message("Création compte FCFA", "Un compte existe déjà pour cet utilisateur.")
+                else:
+                    self.show_message("Création compte FCFA", "Compte créé avec succès.")
+            
+            except Exception as e:
+                self.show_message("Création compte FCFA", f"Erreur lors de la création du compte : {str(e)}")
+
+        
+        
+        
     def invoivepanel(self):
         # Sélectionner une option spécifique (assurez-vous que b2 est défini)
         self.selectionOption(self.b2)
@@ -324,7 +753,7 @@ class Frame1(QWidget):
         panel_transaction = QWidget()
         layout_transaction = QHBoxLayout(panel_transaction)
         # Définir les listes pour les QComboBox
-        nature_transaction_liste = ["Nature Transaction", "depot", "retrait"]
+        transaction_type_liste = ["Nature Transaction", "Envoie", "Retrait"]
         pays_emission_liste = ["Pays Emission", "Maroc", "Gabon"]
         methode_paiement_liste = ["Mode Paiement", "Espece", "Carte"]
         
@@ -357,6 +786,27 @@ class Frame1(QWidget):
         groupRadio.setStyleSheet("background:transparent")
         
         
+        userexist = QComboBox(three_frame_top)
+        userexist.setPlaceholderText("Recepteur")
+        userexist.setStyleSheet("background-color:#2E2E2E;border-radius:4px;")
+        userexist.setGeometry(12,65,148,30)
+        self.getallusers(userexist)
+        
+        userexist2 = QLineEdit(three_frame_top)
+        userexist2.setPlaceholderText("Recherche Emetteur par ID")
+        userexist2.setStyleSheet("border-radius:4px;font:bold;padding-left:12px;")
+        userexist2.setGeometry(12,100,148,30)
+            
+        searcheuser_by_id = QLineEdit(three_frame_top)
+        searcheuser_by_id.setGeometry(12,30,148,30)
+        searcheuser_by_id.setPlaceholderText("Recherche Recepteur par ID")
+        searcheuser_by_id.setStyleSheet("border-radius:4px;font:bold;padding-left;")
+        
+        userexist3 = QComboBox(three_frame_top)
+        userexist3.setPlaceholderText("Emetteur")
+        userexist3.setStyleSheet("background-color:#2E2E2E;border-radius:4px;")
+        userexist3.setGeometry(12,135,148,30)
+        self.getallusers(userexist3)
         
         # Créer le QGroupBox pour contenir les boutons radio
         groupRadio2 = QGroupBox("Status Frais Transaction/AM",three_frame_top)
@@ -372,24 +822,21 @@ class Frame1(QWidget):
         groupRadio2.setFixedHeight(250)
         groupRadio2.setStyleSheet("background:transparent")
         
-        
-        
-        
-        nature_transaction = QComboBox(one_frame_top)
-        nature_transaction.setFixedHeight(30)
-        nature_transaction.setStyleSheet("background-color:#2E2E2E;border-radius:0px;")
+        transaction_type = QComboBox(one_frame_top)
+        transaction_type.setFixedHeight(30)
+        transaction_type.setStyleSheet("background-color:#2E2E2E;border-radius:4px;")
         pays_emission = QComboBox(one_frame_top)
         pays_emission.setFixedHeight(30) 
-        pays_emission.setStyleSheet("background-color:#2E2E2E;border-radius:0px;")
+        pays_emission.setStyleSheet("background-color:#2E2E2E;border-radius:4px;")
         methode_paiement = QComboBox(one_frame_top)
         methode_paiement.setFixedHeight(30)
-        methode_paiement.setStyleSheet("background-color:#2E2E2E;border-radius:0px;")
+        methode_paiement.setStyleSheet("background-color:#2E2E2E;border-radius:4px;")
         BP = QLabel(f"BP: {code_BP}",one_frame_top)
         BP.setStyleSheet("background:transparent")
         AG = QLabel(f"Agence: {AGENT}",one_frame_top)
         AG.setStyleSheet("background:transparent")
         
-        nature_transaction.addItems(nature_transaction_liste)
+        transaction_type.addItems(transaction_type_liste)
         pays_emission.addItems(pays_emission_liste)
         methode_paiement.addItems(methode_paiement_liste )
         
@@ -397,7 +844,7 @@ class Frame1(QWidget):
         AG.setGeometry(12,35,100,30)
         groupRadio.setGeometry(5,175,175,30)
         groupRadio2.setGeometry(5,175,175,30)
-        nature_transaction.setGeometry(12,65,148,30)
+        transaction_type.setGeometry(12,65,148,30)
         pays_emission.setGeometry(12,100,148,30)
         methode_paiement.setGeometry(12,135,148,30)
         
@@ -410,25 +857,26 @@ class Frame1(QWidget):
         self.emetteur = QLineEdit()
         self.emetteur.setPlaceholderText("indicatif/telephone/nom emetteur")
         self.emetteur.setFixedHeight(30)
-        self.emetteur.setStyleSheet("background-color:#2E2E2E;padding-left:12px;")
+        self.emetteur.setStyleSheet("background-color:#2E2E2E;padding-left:12px;border-radius:4px;")
         client_recepteur = QLabel("Recepteur Transaction")
         self.recepteur =  QLineEdit()
         self.recepteur.setPlaceholderText("indicatif/telephone/nom recepteur")
         self.recepteur.setFixedHeight(30)
-        self.recepteur.setStyleSheet("background-color:#2E2E2E;padding-left:12px;")
+        self.recepteur.setStyleSheet("background-color:#2E2E2E;padding-left:12px;border-radius:4px;")
         client_solde = QLabel("Solde Transaction")
         self.solde =  QLineEdit()
         self.solde.setPlaceholderText("Montant de transaction")
         self.solde.setFixedHeight(30)
-        self.solde.setStyleSheet("background-color:#2E2E2E;padding-left:12px;")
+        self.solde.setStyleSheet("background-color:#2E2E2E;padding-left:12px;border-radius:4px;")
         
         code_Agent = QLabel(f"{AG_AM}")
         code_Agent.setStyleSheet("margin-left:50px;font-size:24px;")
         
         valide_transaction = QPushButton("Generer Facture")
+        valide_transaction.setIcon(QIcon(QPixmap(r"Frames\icons\calculator_7133722.png")))
         valide_transaction.setFixedHeight(30)
         valide_transaction.clicked.connect(self.clicked_genereted_facture)
-        valide_transaction.setStyleSheet("background-color:green;")
+        valide_transaction.setStyleSheet("background-color:#4BFFB3;border-radius:4px;color:black;font:bold;")
         
         
         two_frame_top_layout.addWidget(client_emetteur)
@@ -450,7 +898,24 @@ class Frame1(QWidget):
         
         
         bottom_pan = QWidget()
+        vi_ic=QLabel(bottom_pan)
+        vi_ic.setGeometry(10,10,50,50)
+        vi_ic.setPixmap(QPixmap(r"c:\Users\farya\Downloads\money-transfer_9815918.png").scaled(50,50))
         bottom_pan.setStyleSheet("background-color:#3D3D3D;border-radius:12px;")
+        
+        grt = QGroupBox("Choix de transaction:",bottom_pan)
+        ch1 = QRadioButton("Instantanée",grt)
+        ch1.setChecked(True)
+        ch2 = QRadioButton("Client existant",grt)
+        ch3 = QRadioButton("Recharge compte",grt)
+        ch4 = QRadioButton("Generer carte",grt)
+        ch1.setGeometry(10,15,148,30)
+        ch2.setGeometry(120,15,148,30)
+        ch3.setGeometry(230,15,148,30)
+        ch4.setGeometry(360,15,148,30)
+        
+        grt.setGeometry(100,10,500,50)   
+        
         winleft_layout.addWidget(top_pan)
         winleft_layout.addWidget(bottom_pan)
         winleft.setLayout(winleft_layout)
@@ -616,11 +1081,13 @@ class Frame1(QWidget):
         card2.setStyleSheet("background: qlineargradient( x1: 0, y1: 0, x2: 1, y2: 1, stop:0#4BFF93,stop:1#32A528);")
 
         l1 = QLabel("Current Balance",card)
-        dh_solde,card_id = getsolde_dh(code)
-        l2 = QLabel(f"{self.format_with_spaces(card_id,4)}",card)
-        l3 = QLabel(f"MAD {dh_solde}",card)
+        info_cdh = get_balance_mad(code)
+        l2 = QLabel(f"{self.format_with_spaces(info_cdh["id_card"],4)}",card)
+        l3 = QLabel(f"MAD {info_cdh["balance"]}",card)
         l4 = QLabel("09/25",card)
         l5 = QLabel("Aryad",card)
+        
+        
 
         puce1 = QLabel(card)
         puce1.setPixmap(QPixmap(r"Frames\icons\puce.png").scaled(47,37))
@@ -641,9 +1108,9 @@ class Frame1(QWidget):
         ppu2.setStyleSheet("background-color:transparent;")
 
         l1_1 = QLabel("Current Balance",card2)
-        solde_fcfa,id_card= getsolde_fcfa(code);
-        l2_2 = QLabel(self.format_with_spaces(id_card,4),card2)
-        l3_3 = QLabel(f"FCFA {self.format_with_spaces(solde_fcfa,3)}",card2)
+        info_cfcfa = get_balance_fcfa(code)
+        l2_2 = QLabel(self.format_with_spaces(info_cfcfa["id_card"],4),card2)
+        l3_3 = QLabel(f"FCFA {self.format_with_spaces(info_cfcfa["balance"],3)}",card2)
         l4_4 = QLabel("09/25",card2)
         l5_5 = QLabel("Aryad",card2)
 
@@ -693,8 +1160,8 @@ class Frame1(QWidget):
 
         self.defilementHistorique()
 
-        historique_label = QLabel("Payment History",self.s2)
-        historique_label.setGeometry(10,10,200,25)
+        historique_label = QLabel("Historique des paiements",self.s2)
+        historique_label.setGeometry(10,10,300,25)
         historique_label.setStyleSheet("font-size:18px;font:bold;color:#4BFFB3;")
 
         slayout.addWidget(s1)
@@ -733,26 +1200,25 @@ class Frame1(QWidget):
         s12.setStyleSheet("background-color:#3D3D3D;border-radius:15px;")
 
         s22 = QWidget()
-        label_rescent = QLabel("Rescent transaction",s22)
+        label_rescent = QLabel("Transactions rescentes",s22)
         label_rescent.setStyleSheet("font-size:15px;font:bold;color:#4BFFB3;")
-        label_rescent.setGeometry(10,10,150,20)
+        label_rescent.setGeometry(10,10,160,20)
 
         frame_scroll = QScrollArea(s22)
         frame_rescent = QWidget()
         frame_layout = QVBoxLayout()
-        Historiques = get_all_historique(self.code_user)
+        Historiques = get_all_history(self.code_user)
         deviseA, deviseB = "MAD", "FCFA"
 
         for elmt in Historiques:
             # Convertir en objet datetime
-            datetime_obj = datetime.fromisoformat(elmt["date_transaction"])
-            # Extraire la date uniquement
-            date_only = datetime_obj.date()
-            
-            if date_only == datetime.now().date():
+            datetime_obj = elmt["transaction_date"][:10].replace("T"," ")
+            day = str(datetime.now())[:10].replace("T"," ")
+            print(day)
+            print(datetime_obj)
+            if datetime_obj == day:
                 t = QWidget()
                 t_layout = QHBoxLayout()
-
                 i = QLabel()
                 i.setStyleSheet("background:#2E2E2E;border-radius:15px;")
                 i.setAlignment(Qt.AlignCenter)
@@ -761,14 +1227,14 @@ class Frame1(QWidget):
                 j = QLabel()
                 k = QLabel()
 
-                if elmt["nature_transaction"] == "depot":
+                if elmt["transaction_type"] == "envoie":
                     i.setPixmap(QPixmap(r"Frames\icons\190.png").scaled(20, 20))
-                    j.setText("Depot")
-                    k.setText(f"+{deviseA} {elmt['solde_transaction']}")
-                elif elmt["nature_transaction"] == "retrait":
+                    j.setText("Envoie")
+                    k.setText(f"+{deviseA} {elmt['transaction_amount']}")
+                elif elmt["transaction_type"] == "retrait":
                     i.setPixmap(QPixmap(r"Frames\icons\17.png").scaled(20, 20))
                     j.setText("Retrait")
-                    k.setText(f"-{deviseB} {elmt['solde_transaction']}")
+                    k.setText(f"-{deviseB} {elmt['transaction_amount']}")
 
                 t_layout.addWidget(i)
                 t_layout.addWidget(j)
@@ -793,14 +1259,34 @@ class Frame1(QWidget):
         sous_panel_central_central_layout.addWidget(sous_panel_central_central_sous2)
         self.sous_panel_central_central.setLayout(sous_panel_central_central_layout)
 
+    
+    def clear_layout(layout):
+        while layout.count():
+            item = layout.takeAt(0)  # Prend l'élément du layout
+            widget = item.widget()  # Récupère le widget de l'élément (si c'est un widget)
+            if widget:
+                widget.deleteLater()  # Supprime le widget
+
 
     def defilementHistorique(self):
         self.s2 = QWidget()
         self.s2.setStyleSheet("background-color:#3D3D3D;border-radius:15px;")
         scroll = QScrollArea(self.s2)
         slide_historique = QWidget()
+        
+        slide_historique_layout =  self.refresh()
+        slide_historique.setLayout(slide_historique_layout)
+        #Scroll Area Properties
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(slide_historique)
+        scroll.setGeometry(10,40,660,180)
+        
+        
+    def refresh(self):
         slide_historique_layout = QVBoxLayout()
-        Historiques = get_all_historique(self.code_user)
+        Historiques = get_all_history(self.code_user)
         if Historiques:  # Vérifier si la liste des historiques n'est pas vide
             for histo in Historiques:
                 h1 = QWidget()
@@ -808,42 +1294,45 @@ class Frame1(QWidget):
                 icon.setAlignment(Qt.AlignCenter)
                 icon.setFixedSize(32,32)
                 icon.setStyleSheet("background:#2E2E2E;border-radius:15px;border:transparent;")
-                if histo["nature_transaction"] == "depot":
+                if histo["transaction_type"] == "envoie":
                     icon.setPixmap(QPixmap(r"Frames\icons\190.png").scaled(20,20))
                    
-                if histo["nature_transaction"] == "retrait":
+                if histo["transaction_type"] == "retrait":
                     icon.setPixmap(QPixmap(r"Frames\icons\17.png").scaled(20,20))
                    
                 # Assurez-vous que les clés existent et que les données sont correctement formatées
-                emetteur_id = QLabel(str(histo.get("emetteur_id", "Inconnu")))
-                emetteur_id.setStyleSheet("background-color:transparent;border:transparent;")
-                date = QLabel(str(histo.get("date_transaction", "Date inconnue")))
+                recever = QLabel(str(histo.get("receiver","Inconnu")))
+                recever.setStyleSheet("background-color:transparent;border:transparent;")
+                sender = QLabel(str(histo.get("sender", "Inconnu")))
+                sender.setStyleSheet("background-color:transparent;border:transparent;")
+                date = QLabel(str(histo.get("transaction_date", "Date inconnue"))[:19].replace("T"," "))
                 date.setStyleSheet("background-color:transparent;border:transparent;")
-                argent = QLabel(str(histo.get("solde_transaction", "0.0")))
+                argent = QLabel(str(histo.get("transaction_amount", "0.0")))
                 argent.setStyleSheet("background-color:transparent;border:transparent;")
-                nature = QLabel(histo.get("nature_transaction", "Nature inconnue"))
+                free = QLabel(str(histo.get("transaction_fee","0.0")))
+                free.setStyleSheet("background-color:transparent;border:transparent;")
+                nature = QLabel(histo.get("transaction_type", "Nature inconnue"))
                 nature.setStyleSheet("background-color:transparent;border:transparent;")
             
                 
                 layout_pan_histo = QHBoxLayout()
                 layout_pan_histo.addWidget(icon)
 
-                layout_pan_histo.addWidget(emetteur_id)
+                layout_pan_histo.addWidget(recever)
+                layout_pan_histo.addWidget(sender)
                 layout_pan_histo.addWidget(date)
                 layout_pan_histo.addWidget(argent)
+                layout_pan_histo.addWidget(free)
                 layout_pan_histo.addWidget(nature)
 
                 h1.setStyleSheet("background-color:black;border-bottom:1px solid blue;border-radius:0px")
                 h1.setFixedHeight(50)
                 h1.setLayout(layout_pan_histo)
                 slide_historique_layout.addWidget(h1)
-            slide_historique.setLayout(slide_historique_layout)
-            #Scroll Area Properties
-            scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-            scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-            scroll.setWidgetResizable(True)
-            scroll.setWidget(slide_historique)
-            scroll.setGeometry(10,40,660,180)
+                
+            return  slide_historique_layout
+        
+        
     
     def format_with_spaces(self,number,c):
         # Convertir le nombre en chaîne de caractères s'il ne l'est pas déjà
@@ -974,3 +1463,88 @@ class Frame1(QWidget):
         msgBox.setStyleSheet("background-color:#5B4040;color:#FF6B4B;")
         msgBox.setText(message)
         msgBox.exec()
+    
+    
+
+    def generate_unique_password(self,length: int =8) -> str:
+        """Génère un mot de passe unique et sécurisé avec une longueur spécifiée."""
+        # Combinaison des caractères possibles
+        characters = string.ascii_letters + string.digits + string.punctuation
+        # Générer un mot de passe aléatoire sécurisé
+        password = ''.join(secrets.choice(characters) for i in range(length))
+        return password
+    
+    def generate_card_number(self,currency: str, client_id: int) -> str:
+        if currency == "FCFA":
+            prefix = "241"
+        elif currency == "MAD":
+            prefix = "212"
+        else:
+            raise ValueError("Devise non supportée. Utilisez 'FCFA' ou 'MAD'.")
+        # Convertir l'ID du client en chaîne de caractères
+        client_id_str = str(client_id)
+        # Calculer le nombre de chiffres aléatoires nécessaires pour compléter les 16 chiffres
+        num_random_digits = 16 - len(prefix) - len(client_id_str)
+        # Générer des chiffres aléatoires pour compléter le numéro
+        random_digits = ''.join(random.choices("0123456789", k=num_random_digits))
+        # Combiner le préfixe, l'ID du client, et les chiffres aléatoires pour former le numéro de carte complet
+        card_number = prefix + client_id_str + random_digits
+        return card_number
+    
+    def chargeHistorique(self):
+        Historiques = get_all_history(self.code_user)
+        layout = QVBoxLayout()
+        for histo in Historiques:
+            win_orientation = QHBoxLayout()
+            # Créer des QLabel pour chaque champ de l'historique
+            transaction_type = QLabel(histo["transaction_type"])
+            transaction_date = QLabel(histo["transaction_date"][:19].replace("T"," "))
+            transaction_amount = QLabel(str(histo["transaction_amount"]))
+            Emetteur = QLabel(str(histo["sender"]))
+            Recepteur = QLabel(str(histo["receiver"]))
+            frais = QLabel(str(histo["transaction_fee"]))
+            win_orientation.addWidget(transaction_type)
+            win_orientation.addWidget(transaction_date)
+            win_orientation.addWidget(transaction_amount)
+            win_orientation.addWidget(Emetteur)
+            win_orientation.addWidget(Recepteur)
+            win_orientation.addWidget(frais)
+            win = QWidget()
+            win.setLayout(win_orientation)
+            win.setFixedHeight(50)
+            win.setStyleSheet("background:red;margin-bottom:1px;border-radius:0px;")
+            layout.addWidget(win)
+        
+        frame_tab = QWidget()
+        frame_tab.setLayout(layout)
+        return frame_tab
+    
+    
+    def chargeHistorique2(self,vue):
+        Historiques = get_all_history(self.code_user)
+        layout = QVBoxLayout()
+        for histo in Historiques:
+            win_orientation = QHBoxLayout()
+            # Créer des QLabel pour chaque champ de l'historique
+            if histo["transaction_type"]==vue:
+                transaction_type = QLabel(histo["transaction_type"])
+                transaction_date = QLabel(histo["transaction_date"][:19].replace("T"," "))
+                transaction_amount = QLabel(str(histo["transaction_amount"]))
+                Emetteur = QLabel(str(histo["sender"]))
+                Recepteur = QLabel(str(histo["receiver"]))
+                frais = QLabel(str(histo["transaction_fee"]))
+                win_orientation.addWidget(transaction_type)
+                win_orientation.addWidget(transaction_date)
+                win_orientation.addWidget(transaction_amount)
+                win_orientation.addWidget(Emetteur)
+                win_orientation.addWidget(Recepteur)
+                win_orientation.addWidget(frais)
+                win = QWidget()
+                win.setLayout(win_orientation)
+                win.setFixedHeight(50)
+                win.setStyleSheet("background:red;margin-bottom:1px;border-radius:0px;")
+                layout.addWidget(win)
+        
+        frame_tab = QWidget()
+        frame_tab.setLayout(layout)
+        return frame_tab

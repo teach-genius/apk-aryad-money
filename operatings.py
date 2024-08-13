@@ -1,87 +1,162 @@
 from settings import URL_BASE
 import requests
-from datetime import datetime
 
-
-class Compte:
-    def __init__(self) -> None:
-        # account fcfa
-        self.Id_Fcfa_Card = None
-        self.Solde_FCFA = None
-        # account mad
-        self.Solde_MAD = None
-        self.Id_Mad_Card = None 
-        # Historique
-        self.Historique_transaction = None
-
-def login(name, pswd):
-    url = f"{URL_BASE}/login/myaccount/connect"
-    data_login = {
-        "user_name": name,
-        "password":pswd
-        }
-    response = requests.post(url, json=data_login)
-    return response.json().get("Token"),response.json().get("label")
-
-def getsolde_dh(code:int):
-    url = f"{URL_BASE}/mad_solde/myaccount/soldeaccount"
-    data_solde = {
-        "code":code
-    }
-    response = requests.post(url,json=data_solde)
-    return response.json().get("solde"),response.json().get("id_card")
-
-def getsolde_fcfa(code:int):
-    url = f"{URL_BASE}/fcfa_solde/myaccount/soldeaccount"
-    data_solde = {
-        "code":code
-    }
-    response = requests.post(url,json=data_solde)
-    return response.json().get("solde"),response.json().get("id_card")
-
-def get_all_historique(code:int):
-    url = f"{URL_BASE}/historique/myaccount/all"
-    data_solde = {
-        "code":code
-    }
-    response = requests.post(url,json=data_solde)
-    return response.json().get("Historique",None)
-
-def createsatususer(phone,email,cni,status):
-    url = f"{URL_BASE}/type_user/myaccount/create"
-    data_create = {
+def create_user(name: str, firstname: str, country: str, phone: str, email: str, card_identity: str, city: str):
+    url = f"{URL_BASE}/API/V1/CREATE/NEW/USER"
+    user_info = {
+        "name": name,
+        "firstname": firstname,
+        "country": country,
         "phone": phone,
         "email": email,
-        "cni":cni,
-        "status":status
+        "card_identity": card_identity,
+        "city": city
     }
-    response = requests.post(url, json=data_create)
-    return response.json().get("Message", None)
+    try:
+        response = requests.post(url, json=user_info)
+        response.raise_for_status()
+        return response.json().get("message")
+    except requests.exceptions.RequestException as e:
+        print(f"Error creating user: {e}")
+        return None
 
-def create_historique(nature_transaction: str, solde_transaction: float,  # type: ignore
-                      emetteur_id: int, recepteur_id: int, methode_paiement: str, pays_emission: str):
-    url = f"{URL_BASE}/create/historique/in_table_historique"
-    
-    # Utilise la date et l'heure actuelles pour la transaction
-    date_transaction = datetime.now()
-    
-    db_historique = {
-        "nature_transaction": nature_transaction,
-        "date_transaction": date_transaction.isoformat(),  # Format ISO 8601
-        "solde_transaction": solde_transaction,
-        "emetteur_id": emetteur_id,
-        "recepteur_id": recepteur_id,
-        "methode_paiement": methode_paiement,
-        "pays_emission": pays_emission
+def get_all_users(id:int):
+    url = f"{URL_BASE}/API/V1/ALL/USERS/EXISTS"
+    user_info = {
+        "id_user": id
     }
+    try:
+        response = requests.post(url, json=user_info)
+        response.raise_for_status()
+        return response.json().get("users")
+    except requests.exceptions.RequestException as e:
+        print(f"Error creating user: {e}")
+        return None
     
-  
-    response = requests.post(url, json=db_historique)
-    return response.json().get("Notification", None)
 
+def create_new_account_fcfa(balance: float, card: str, user_id: int, status: bool = False):
+    url = f"{URL_BASE}/API/V1/CREATE/NEW/ACCOUNT/FCFA"
+    account_info = {
+        "balance": balance,
+        "card": card,
+        "user_id": user_id,
+        "status": status
+    }
+    try:
+        response = requests.post(url, json=account_info)
+        response.raise_for_status()
+        return response.json().get("message")
+    except requests.exceptions.RequestException as e:
+        print(f"Error creating FCFA account: {e}")
+        return None
 
+def create_new_account_mad(balance: float, card: str, user_id: int, status: bool = False):
+    url = f"{URL_BASE}/API/V1/CREATE/NEW/ACCOUNT/MAD"
+    account_info = {
+        "balance": balance,
+        "card": card,
+        "user_id": user_id,
+        "status": status
+    }
+    try:
+        response = requests.post(url, json=account_info)
+        response.raise_for_status()
+        return response.json().get("message")
+    except requests.exceptions.RequestException as e:
+        print(f"Error creating MAD account: {e}")
+        return None
 
-if __name__ == "__main__":
-    
-    b = get_all_historique(1)
-    print(f"message : {b}")
+def create_transaction_history(receiver: str, sender: str, transaction_amount: float, transaction_fee: float, transaction_type: str, receiver_id: int, sender_id: int):
+    url = f"{URL_BASE}/API/V1/CREATE/TRANSACTION/HISTORY"
+    transaction_info = {
+        "receiver": receiver,
+        "sender": sender,
+        "transaction_amount": transaction_amount,
+        "transaction_fee": transaction_fee,
+        "transaction_type": transaction_type,
+        "receiver_id": receiver_id,
+        "sender_id": sender_id
+    }
+    try:
+        response = requests.post(url, json=transaction_info)
+        response.raise_for_status()
+        return response.json().get("history")
+    except requests.exceptions.RequestException as e:
+        print(f"Error creating transaction history: {e}")
+        return None
+
+def create_security(username: str, password: str, user_type: str, activation_code: str, user_id: int, status: bool):
+    url = f"{URL_BASE}/API/V1/CREATE/NEW/SECURITY"
+    security_info = {
+        "username": username,
+        "password": password,
+        "user_type": user_type,
+        "activation_code": activation_code,
+        "user_id": user_id,
+        "status": status
+    }
+    try:
+        response = requests.post(url, json=security_info)
+        response.raise_for_status()
+        return response.json().get("message")
+    except requests.exceptions.HTTPError as http_err:
+        print(f"HTTP error occurred: {http_err}")
+    except requests.exceptions.RequestException as req_err:
+        print(f"Request error occurred: {req_err}")
+    return None
+
+def get_id_user(name: str, firstname: str):
+    url = f"{URL_BASE}/API/V1/GET/ID/USER"
+    data = {
+        "name": name,
+        "firstname": firstname
+    }
+    try:
+        response = requests.post(url, json=data)  # Changed to POST as per API definition
+        response.raise_for_status()
+        return response.json().get("id_user")
+    except requests.exceptions.HTTPError as http_err:
+        print(f"HTTP error occurred: {http_err}")
+    except requests.exceptions.RequestException as req_err:
+        print(f"Request error occurred: {req_err}")
+    return None
+
+def login(name: str, pswd: str):
+    url = f"{URL_BASE}/API/V1/CHECK/USER/{name}/{pswd}/SECURITY"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json().get("loginup")
+    except requests.exceptions.RequestException as e:
+        print(f"Login error: {e}")
+        return None
+
+def get_all_history(user_id: int):
+    url = f"{URL_BASE}/API/V1/GET/ALL/{user_id}/HISTORIQUE"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json().get("histories")
+    except requests.exceptions.RequestException as e:
+        print(f"Error retrieving history: {e}")
+        return None
+
+def get_balance_mad(user_id: int):
+    url = f"{URL_BASE}/API/V1/GET/SOLDE/{user_id}/MAD"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json().get("account_info")
+    except requests.exceptions.RequestException as e:
+        print(f"Error retrieving MAD balance: {e}")
+        return None
+
+def get_balance_fcfa(user_id: int):
+    url = f"{URL_BASE}/API/V1/GET/SOLDE/{user_id}/FCFA"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json().get("account_info")
+    except requests.exceptions.RequestException as e:
+        print(f"Error retrieving FCFA balance: {e}")
+        return None
