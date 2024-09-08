@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
+from PySide6.QtPrintSupport import *
 from datetime import datetime
 import locale
 from settings import *
@@ -8,7 +9,13 @@ from operatings import *
 import re
 import secrets
 import string
+import numpy as np
 import random
+from PySide6.QtPrintSupport import *
+import os 
+import random
+import string
+import webbrowser
 
 class History(QWidget):
     def __init__(self) -> None:
@@ -52,7 +59,7 @@ class Frame1(QWidget):
         
         name_logoU = QLabel("AryadMoney", w1)
         name_logoU.setGeometry(55, 8, 150, 25)
-        name_logoU.setStyleSheet("font-size:18px;font:bold;color:#808080;")
+        name_logoU.setStyleSheet("font-size:18px;font:bold;color:#808080;font-weight: bold;")
 
         w1.setFixedHeight(40)
         w1.setStyleSheet("background-color:#2E2E2E;")
@@ -88,7 +95,7 @@ class Frame1(QWidget):
         self.b1.setStyleSheet("background-color:#4BFFB3;")
         lb1_layout = QHBoxLayout()
         lb1 = QLabel("Acceuil")
-        lb1.setStyleSheet("color:#808080;")
+        lb1.setStyleSheet("color:#808080;font-weight: bold;")
         ico_drach = QPushButton()
         ico_drach.clicked.connect(self.Acceuil)
         ico_drach.setIcon(QIcon(QPixmap(r"Frames\icons\home.png").scaled(30, 30)))  # Ajout de l'icône correctement
@@ -101,7 +108,7 @@ class Frame1(QWidget):
         self.b2 = QWidget()
         lb2_layout = QHBoxLayout()
         lb2 = QLabel("Transactions")
-        lb2.setStyleSheet("color:#808080;")
+        lb2.setStyleSheet("color:#808080;font-weight: bold;")
         ico_inv = QPushButton()
         ico_inv.clicked.connect(self.invoivepanel)
         ico_inv.setIcon(QIcon(QPixmap(r"Frames\icons\transaction.png").scaled(30, 30)))
@@ -113,7 +120,7 @@ class Frame1(QWidget):
         self.b3 = QWidget()
         lb3_layout = QHBoxLayout()
         lb3 = QLabel("Carte")
-        lb3.setStyleSheet("color:#808080;")
+        lb3.setStyleSheet("color:#808080;font-weight: bold;")
         ico_card= QPushButton()
         ico_card.clicked.connect(self.cardpanel)
         ico_card.setIcon(QIcon(QPixmap(r"Frames\icons\19.png").scaled(30, 30)))
@@ -125,7 +132,7 @@ class Frame1(QWidget):
         self.b4 = QWidget()
         lb4_layout = QHBoxLayout()
         lb4 = QLabel("Historique")
-        lb4.setStyleSheet("color:#808080;")
+        lb4.setStyleSheet("color:#808080;font-weight: bold;")
         ico_history = QPushButton()
         ico_history.clicked.connect(self.Historique)
         ico_history.setIcon(QIcon(QPixmap(r"Frames\icons\20.png").scaled(30, 30)))  # Ajout de l'icône correctement
@@ -137,7 +144,7 @@ class Frame1(QWidget):
         self.b5 = QWidget()
         lb5_layout = QHBoxLayout()
         lb5 = QLabel("Parametre")
-        lb5.setStyleSheet("color:#808080;")
+        lb5.setStyleSheet("color:#808080;font-weight: bold;")
         ico_setting = QPushButton()
         ico_setting.clicked.connect(self.parametrepanel)
         ico_setting.setIcon(QIcon(QPixmap(r"Frames\icons\22.png").scaled(30, 30)))
@@ -150,7 +157,7 @@ class Frame1(QWidget):
         b6.setStyleSheet("background-color:#4BFFB3;")
         lb6_layout = QHBoxLayout()
         lb6 = QLabel("Sortir")
-        lb6.setStyleSheet("color:#808080;")
+        lb6.setStyleSheet("color:#808080;font-weight: bold;")
         ico_exit = QPushButton()
         ico_exit.clicked.connect(QApplication.instance().quit)
         ico_exit.setIcon(QIcon(QPixmap(r"Frames\icons\exit.png").scaled(30, 30)))
@@ -234,7 +241,7 @@ class Frame1(QWidget):
         layout_transaction =QVBoxLayout()
 
         tit_hit = QLabel("Historique Transaction")
-        tit_hit.setStyleSheet("font-size:22px;font:bold;margin-left:10px;")
+        tit_hit.setStyleSheet("font-size:22px;margin-left:10px;font-weight: bold;")
         
         choice_wid = QWidget()
         choice_wid.setFixedWidth(170)
@@ -304,12 +311,13 @@ class Frame1(QWidget):
     def updateHistoryView(self, vue):
         if vue=="All":
             tab_fram = self.chargeHistorique()
-            self.History_scrolarea.setWidget(tab_fram)
-            print(f"{vue} historique")
+            if tab_fram is not None:
+                self.History_scrolarea.setWidget(tab_fram)
         else:      
             tab_fram = self.chargeHistorique2(vue)
-            self.History_scrolarea.setWidget(tab_fram)
-            print(f"{vue} historique")
+            if tab_fram is not None:
+                self.History_scrolarea.setWidget(tab_fram)
+            
 
     def Acceuil(self):
         self.selectionOption(self.b1)
@@ -349,15 +357,19 @@ class Frame1(QWidget):
         self.balncelft2.setFixedHeight(30)
         
         labpays = QLabel()
+        tab_cfa = ["Pays","Maroc","Gabon"]
         labpays.setText('<span style="color:red;">*</span><span style="color:white;"> Pays</span>')
-        self.balncelft3 = QLineEdit(vleft)
+        self.balncelft3 = QComboBox(vleft)
+        self.balncelft3.addItems(tab_cfa)
         self.balncelft3.setStyleSheet("border-radius:4px;background-color:#ffffff;padding-left:12px;color:black;")
         self.balncelft3.setPlaceholderText("Pays")
         self.balncelft3.setFixedHeight(30)
         
+        self.balncelft3.currentIndexChanged.connect(self.on_combobox_change)
+        
         labville = QLabel()
         labville.setText('<span style="color:red;">*</span><span style="color:white;"> Ville</span>')
-        self.balncelft4 = QLineEdit(vleft)
+        self.balncelft4 = QComboBox(vleft)
         self.balncelft4.setStyleSheet("border-radius:4px;background-color:#ffffff;padding-left:12px;color:black;")
         self.balncelft4.setPlaceholderText("Ville")
         self.balncelft4.setFixedHeight(30)
@@ -384,7 +396,7 @@ class Frame1(QWidget):
         self.balncelft7.setFixedHeight(30)
         
         inf = QLabel("Informations de l'utilisateur")
-        inf.setStyleSheet("margin-left:60px;margin-bottom:5px;font:bold;")
+        inf.setStyleSheet("margin-left:60px;margin-bottom:5px;font-weight: bold;")
         vleftlayout.addWidget(inf)
         vleftlayout.addWidget(labnom)
         vleftlayout.addWidget(self.balncelft1)
@@ -429,6 +441,7 @@ class Frame1(QWidget):
         createcardf.setGeometry(313,525,150,30)
         
         grdh = QGroupBox("création de compte MAD",vright)
+        grdh.setStyleSheet("font-weight: bold;color:#ffffff;")
         self.choix1 = QRadioButton("Actif",grdh)
         choix2 = QRadioButton("Inactif",grdh)
         choix2.setChecked(True)
@@ -437,6 +450,7 @@ class Frame1(QWidget):
         choix2.setGeometry(80,20,150,50)
         
         grfcfa = QGroupBox("création de compte FCFA",vright)
+        grfcfa.setStyleSheet("font-weight: bold;color:#ffffff;")
         self.choix1f = QRadioButton("Actif",grfcfa)
         choix2f = QRadioButton("Inactif",grfcfa)
         choix2f.setChecked(True)
@@ -489,6 +503,7 @@ class Frame1(QWidget):
         self.generated_code.clicked.connect(self.generatednum)
         
         gpr = QGroupBox("status de securité du compte ",sec)
+        gpr.setStyleSheet("font-weight: bold;color:#ffffff;")
         self.actifac = QRadioButton("Actif",sec)
         self.inactifac = QRadioButton("Inactif",sec)
         self.inactifac.setChecked(True)
@@ -504,7 +519,7 @@ class Frame1(QWidget):
         savacces.setGeometry(467,525,150,30)
         
         priv = QLabel("Privilèges utilisateur",sec)
-        priv.setStyleSheet("color:#ffffff;font:bold;")
+        priv.setStyleSheet("color:#ffffff;font-weight: bold;")
         priv.setGeometry(65,10,230,30)
             
         self.username_sec.setGeometry(10,80,230,30)
@@ -539,12 +554,12 @@ class Frame1(QWidget):
         pp.setStyleSheet("background-color:transparent;")
 
         self.nameuser1 = QComboBox(card_view)
-        self.nameuser1.setStyleSheet("font:bold;background-color:transparent;border-radius:0px;color:black;")
+        self.nameuser1.setStyleSheet("font:bold;background-color:#ffffff;border-radius:4px;color:black;")
         self.nameuser1.setPlaceholderText("Nom utilisateur")
         self.nameuser1.setGeometry(170,10,150,30)
         
         self.id_card2  = QLabel("ID:",card_view)
-        self.id_card2.setStyleSheet("padding-left:6px;")
+        self.id_card2.setStyleSheet("padding-left:6px;font-weight: bold;")
         self.id_card2.setGeometry(10,160,30,30)
         
         lbcard2 = QLabel(card_view)
@@ -573,7 +588,7 @@ class Frame1(QWidget):
         card_view1.setStyleSheet("background: qlineargradient( x1: 0, y1: 0, x2: 1, y2: 1,  stop: 0 #284AA5, stop: 1 #4B7DFF);")
 
         self.nameuser = QComboBox(card_view1)
-        self.nameuser.setStyleSheet("font:bold;background-color:transparent;border-radius:0px;color:black;")
+        self.nameuser.setStyleSheet("font:bold;background-color:#ffffff;border-radius:4px;color:black;")
         self.nameuser.setPlaceholderText("Nom utilisateur")
         self.nameuser.setGeometry(170,10,150,30)
         
@@ -581,7 +596,7 @@ class Frame1(QWidget):
         self.getallusers(self.nameuser1)
         
         self.id_card1  = QLabel("ID:",card_view1)
-        self.id_card1.setStyleSheet("padding-left:6px;")
+        self.id_card1.setStyleSheet("padding-left:6px;font-weight: bold;")
         self.id_card1.setGeometry(10,160,30,30)
         
         puce2 = QLabel(card_view1)
@@ -607,8 +622,21 @@ class Frame1(QWidget):
         card_view1.setGeometry(10,300,340,200)
         
         
+    def on_combobox_change(self):
+        # Tables des options pour les différentes sélections
+        tab_mad = ["Fès", "Casablanca", "Rabat", "Meknès"]
+        tab_cfa = ["Libreville", "Franceville", "Lambarene", "Mouila"]
+        # Récupérer la valeur sélectionnée dans le QComboBox
+        selected_value = self.balncelft3.currentText()
+        # Vider le deuxième QComboBox avant de le remplir
+        self.balncelft4.clear()
+        # Ajouter les villes correspondantes selon le pays sélectionné
+        if selected_value == "Maroc":
+            self.balncelft4.addItems(tab_mad)
+        elif selected_value == "Gabon":
+            self.balncelft4.addItems(tab_cfa)
         
-        
+            
         
     def create_security_privilege(self):
         username = self.username_sec.currentText()
@@ -617,7 +645,6 @@ class Frame1(QWidget):
         activation_code = self.activation_code_sec.text()
         
         name, firstname = username.split(" ")
-        print(name,firstname)
         id_user = get_id_user(name, firstname)
         
         status = self.actifac.isChecked()
@@ -632,9 +659,10 @@ class Frame1(QWidget):
     def getallusers(self, combo: QComboBox):
         combo.clear()
         users = get_all_users(self.code_user)
-        print(users)
         if(len(users)!=0):
             combo.addItems(users)
+        else:
+            return 
     
     def genered(self):
         self.password_sec.setText(self.generate_unique_password())
@@ -683,25 +711,38 @@ class Frame1(QWidget):
         return code
         
     def createuser(self):
-        nom = self.balncelft1.text()
-        prenom = self.balncelft2.text()
-        pays = self.balncelft3.text()
-        ville = self.balncelft4.text()
-        cni =  self.balncelft5.text()
-        phone = self.balncelft6.text()
-        email = self.balncelft7.text()
-        retour = create_user(nom,prenom,pays,phone,email,cni,ville)
+        """
+        Collects user information from input fields, creates a new user, updates the user list, and shows a message.
+        """
+        # Get text from input fields, remove extra spaces, and assign to variables
+        nom = self.balncelft1.text().strip()
+        prenom = self.balncelft2.text().strip()
+        pays = self.balncelft3.currentText().strip()
+        ville = self.balncelft4.currentText().strip()
+        cni = self.balncelft5.text().strip()
+        phone = self.balncelft6.text().strip()
+        email = self.balncelft7.text().strip()
+
+        # Call create_user function with gathered data
+        retour = create_user(nom, prenom, pays, phone, email, cni, ville)
+
+        # Update user lists (this seems redundant, consider consolidating if possible)
         self.getallusers(self.username_sec)
         self.getallusers(self.nameuser)
         self.getallusers(self.nameuser1)
-        self.show_message("creation utilisateur",retour)
-        self.balncelft1.setText("")
-        self.balncelft2.setText("")
-        self.balncelft3.setText("")
-        self.balncelft4.setText("")
-        self.balncelft5.setText("")
-        self.balncelft6.setText("")
-        self.balncelft7.setText("")
+
+        # Display a message to the user with the result of the create_user operation
+        self.show_message("Création utilisateur", retour)
+
+        # Clear the input fields after user creation
+        self.balncelft1.clear()
+        self.balncelft2.clear()
+        self.balncelft3.clear()
+        self.balncelft4.clear()
+        self.balncelft5.clear()
+        self.balncelft6.clear()
+        self.balncelft7.clear()
+
         
     def createmadaccount(self):
         data = self.nameuser.currentText()
@@ -711,15 +752,11 @@ class Frame1(QWidget):
             try:
                 name, firstname = data.split(" ")
                 id_user = get_id_user(name, firstname)
+                
                 code = self.view_id_card.text().replace(" ", "")
                 status = self.choix1.isChecked()
-                message = create_new_account_mad(0.0, code, id_user, status)
-                
-                if not message:
-                    self.show_message("Création compte MAD", "Un compte existe déjà pour cet utilisateur.")
-                else:
-                    self.show_message("Création compte MAD", "Compte créé avec succès.")
-            
+                message = create_new_account_mad_request(0, str(code), int(id_user),bool(status))
+                self.show_message("Création compte MAD",message)
             except Exception as e:
                 self.show_message("Création compte MAD", f"Erreur lors de la création du compte : {str(e)}")
 
@@ -779,32 +816,37 @@ class Frame1(QWidget):
         fcfa_choice = QRadioButton("FCFA",groupRadio)
         # Ajouter les QRadioButton au QGroupBox
         dh_choice.setGeometry(12,17,100,20)
-        dh_choice.setStyleSheet("background:transparent;font-size:10px;")
+        dh_choice.setStyleSheet("background:transparent;font-size:10px;font-weight: bold;color:#ffffff;")
         fcfa_choice.setGeometry(100,17,100,20)
-        fcfa_choice.setStyleSheet("background:transparent;font-size:10px;")
+        fcfa_choice.setStyleSheet("background:transparent;font-size:10px;font-weight: bold;color:#ffffff;")
         groupRadio.setFixedHeight(250)
-        groupRadio.setStyleSheet("background:transparent")
+        groupRadio.setStyleSheet("background:transparent;font-weight: bold;color:#ffffff;")
         
+        printrecharge = QPushButton("Imprime recharge",one_frame_top)
+        printrecharge.clicked.connect(self.print_recharge_card)
+        printrecharge.setStyleSheet("background-color:#4BFFB3;border-radius:4px;color:black;font:bold;")
+        printrecharge.setIcon(QIcon(QPixmap(r"Frames\icons\printer_8139457.png")))
+        printrecharge.setGeometry(12,220,148,30)
         
         userexist = QComboBox(three_frame_top)
         userexist.setPlaceholderText("Recepteur")
-        userexist.setStyleSheet("background-color:#2E2E2E;border-radius:4px;")
+        userexist.setStyleSheet("background-color:#2E2E2E;border-radius:4px;font-weight: bold;color:#ffffff;")
         userexist.setGeometry(12,65,148,30)
         self.getallusers(userexist)
         
         userexist2 = QLineEdit(three_frame_top)
-        userexist2.setPlaceholderText("Recherche Emetteur par ID")
-        userexist2.setStyleSheet("border-radius:4px;font:bold;padding-left:12px;")
+        userexist2.setPlaceholderText("Recherche Em. par ID")
+        userexist2.setStyleSheet("border-radius:4px;padding-left:12px;font-weight: bold;color:#ffffff;")
         userexist2.setGeometry(12,100,148,30)
             
         searcheuser_by_id = QLineEdit(three_frame_top)
         searcheuser_by_id.setGeometry(12,30,148,30)
-        searcheuser_by_id.setPlaceholderText("Recherche Recepteur par ID")
+        searcheuser_by_id.setPlaceholderText("Recherche Re. par ID")
         searcheuser_by_id.setStyleSheet("border-radius:4px;font:bold;padding-left;")
         
         userexist3 = QComboBox(three_frame_top)
         userexist3.setPlaceholderText("Emetteur")
-        userexist3.setStyleSheet("background-color:#2E2E2E;border-radius:4px;")
+        userexist3.setStyleSheet("background-color:#2E2E2E;border-radius:4px;font-weight: bold;color:#ffffff;")
         userexist3.setGeometry(12,135,148,30)
         self.getallusers(userexist3)
         
@@ -813,35 +855,41 @@ class Frame1(QWidget):
         # Créer les QRadioButton pour les options de devises
         applique_choice = QRadioButton("Avec Frais",groupRadio2)
         noapplique_choice = QRadioButton("Sans Frais",groupRadio2)
-        applique_choice.setStyleSheet("background:transparent;font-size:10px;")
-        noapplique_choice.setStyleSheet("background:transparent;font-size:10px;")
+        applique_choice.setStyleSheet("background:transparent;font-size:10px;font-weight: bold;color:#ffffff;")
+        noapplique_choice.setStyleSheet("background:transparent;font-size:10px;font-weight: bold;color:#ffffff;")
         # Ajouter les QRadioButton au QGroupBox
         applique_choice.setChecked(True)
         applique_choice.setGeometry(5,17,100,20)
         noapplique_choice.setGeometry(95,17,100,20)
         groupRadio2.setFixedHeight(250)
-        groupRadio2.setStyleSheet("background:transparent")
+        groupRadio2.setStyleSheet("background:transparent;font-weight: bold;color:#ffffff;")
+        
+        printFACTURE = QPushButton("Imprime Facture",three_frame_top)
+        printFACTURE.clicked.connect(self.print_facture)
+        printFACTURE.setStyleSheet("background-color:#4BFFB3;border-radius:4px;color:black;font:bold;")
+        printFACTURE.setIcon(QIcon(QPixmap(r"Frames\icons\printer_8139457.png")))
+        printFACTURE.setGeometry(12,220,148,30)
         
         transaction_type = QComboBox(one_frame_top)
         transaction_type.setFixedHeight(30)
-        transaction_type.setStyleSheet("background-color:#2E2E2E;border-radius:4px;")
+        transaction_type.setStyleSheet("background-color:#2E2E2E;border-radius:4px;font-weight: bold;color:#ffffff;")
         pays_emission = QComboBox(one_frame_top)
         pays_emission.setFixedHeight(30) 
-        pays_emission.setStyleSheet("background-color:#2E2E2E;border-radius:4px;")
+        pays_emission.setStyleSheet("background-color:#2E2E2E;border-radius:4px;font-weight: bold;color:#ffffff;")
         methode_paiement = QComboBox(one_frame_top)
         methode_paiement.setFixedHeight(30)
-        methode_paiement.setStyleSheet("background-color:#2E2E2E;border-radius:4px;")
+        methode_paiement.setStyleSheet("background-color:#2E2E2E;border-radius:4px;font-weight: bold;color:#ffffff;")
         BP = QLabel(f"BP: {code_BP}",one_frame_top)
-        BP.setStyleSheet("background:transparent")
+        BP.setStyleSheet("background:transparent;font-weight: bold;color:#ffffff;")
         AG = QLabel(f"Agence: {AGENT}",one_frame_top)
-        AG.setStyleSheet("background:transparent")
+        AG.setStyleSheet("background:transparent;font-weight: bold;color:#ffffff;")
         
         transaction_type.addItems(transaction_type_liste)
         pays_emission.addItems(pays_emission_liste)
         methode_paiement.addItems(methode_paiement_liste )
         
         BP.setGeometry(12,5,100,30)
-        AG.setGeometry(12,35,100,30)
+        AG.setGeometry(12,35,120,30)
         groupRadio.setGeometry(5,175,175,30)
         groupRadio2.setGeometry(5,175,175,30)
         transaction_type.setGeometry(12,65,148,30)
@@ -854,16 +902,19 @@ class Frame1(QWidget):
         two_frame_top_layout = QVBoxLayout()
         
         client_emetteur = QLabel("Emetteur Transaction")
+        client_emetteur.setStyleSheet("font-weight: bold;color:#ffffff;")
         self.emetteur = QLineEdit()
         self.emetteur.setPlaceholderText("indicatif/telephone/nom emetteur")
         self.emetteur.setFixedHeight(30)
         self.emetteur.setStyleSheet("background-color:#2E2E2E;padding-left:12px;border-radius:4px;")
         client_recepteur = QLabel("Recepteur Transaction")
+        client_recepteur.setStyleSheet("font-weight: bold;color:#ffffff;")
         self.recepteur =  QLineEdit()
         self.recepteur.setPlaceholderText("indicatif/telephone/nom recepteur")
         self.recepteur.setFixedHeight(30)
         self.recepteur.setStyleSheet("background-color:#2E2E2E;padding-left:12px;border-radius:4px;")
         client_solde = QLabel("Solde Transaction")
+        client_solde.setStyleSheet("font-weight: bold;color:#ffffff;")
         self.solde =  QLineEdit()
         self.solde.setPlaceholderText("Montant de transaction")
         self.solde.setFixedHeight(30)
@@ -894,8 +945,7 @@ class Frame1(QWidget):
         top_pan_layout.addWidget(two_frame_top)
         top_pan_layout.addWidget(three_frame_top)
         top_pan.setLayout(top_pan_layout)
-        
-        
+         
         
         bottom_pan = QWidget()
         vi_ic=QLabel(bottom_pan)
@@ -904,6 +954,7 @@ class Frame1(QWidget):
         bottom_pan.setStyleSheet("background-color:#3D3D3D;border-radius:12px;")
         
         grt = QGroupBox("Choix de transaction:",bottom_pan)
+        grt.setStyleSheet("font-weight: bold;color:#ffffff;")
         ch1 = QRadioButton("Instantanée",grt)
         ch1.setChecked(True)
         ch2 = QRadioButton("Client existant",grt)
@@ -913,8 +964,67 @@ class Frame1(QWidget):
         ch2.setGeometry(120,15,148,30)
         ch3.setGeometry(230,15,148,30)
         ch4.setGeometry(360,15,148,30)
+        grt.setGeometry(100,10,500,50) 
         
-        grt.setGeometry(100,10,500,50)   
+        wid_recharge = QWidget(bottom_pan)
+        
+        wid_recharge.setStyleSheet("background-color:#2E2E2E;padding-left:12px;border-radius:4px;")
+        wid_recharge.setGeometry(10,80,290,170) 
+        
+        lb_ss= QLabel("Identifiant de la carte:",wid_recharge)
+        lb_ss.setStyleSheet("color:#ffffff;font-weight: bold;")
+        lb_ss.setGeometry(0,8,200,10)
+        
+        self.sold = QLineEdit(wid_recharge)
+        self.sold.setPlaceholderText("Recherche bénéficiaire par ID")
+        self.sold.setStyleSheet("background-color:#ffffff;font-weight: bold;color:black;")
+        self.sold.setGeometry(10,30,270,30)
+        
+        lb_sr= QLabel("Nom du client:",wid_recharge)
+        lb_sr.setStyleSheet("color: #ffffff;font-weight: bold;")
+        lb_sr.setGeometry(0,70,200,10)
+        
+        self.client_recep = QComboBox(wid_recharge)
+        self.client_recep.setPlaceholderText("Nom du bénéficiaire de la recharge")
+        self.client_recep.setStyleSheet("background-color:#3D3D3D;font-weight: bold;")
+        self.client_recep.setGeometry(10,90,270,30)
+        self.getallusers(self.client_recep)
+        self.sold.textChanged.connect(self.search_client)
+        
+        self.montlab = QLabel("Montant:",wid_recharge)
+        self.montlab.setStyleSheet("color: #ffffff;font-weight: bold;")
+        self.montlab.setGeometry(130, 135, 90, 30)
+    
+        self.mont = QLineEdit(wid_recharge)
+        self.mont.setStyleSheet("background-color: #ffffff; border-radius: 4px; color: black; font-weight: bold;")
+        self.mont.setGeometry(200, 135, 80, 30)
+        
+        gen_card = QPushButton("generer recharge",wid_recharge)
+        gen_card.clicked.connect(self.generate_recharge)
+        gen_card.setIcon(QIcon(QPixmap(r"Frames\icons\credit-card_6296460.png")))
+        gen_card.setGeometry(10,135,130,30)
+        gen_card.setStyleSheet("background-color:#4BFFB3;border-radius:4px;color:black;font:bold;")
+        
+
+        
+        wid_recharge2 = QWidget(bottom_pan)
+        self.view_card_recharge = QTextEdit(wid_recharge2)
+        self.view_card_recharge.setReadOnly(True)
+        self.info_fact = """
+                Carte de Recharge AryadMoney      
+        ---------------------------------------------
+        Code recharge: {code_recharge}        
+                                                {montant} {devise}      
+        ---------------------------------------------
+        Contactez-Nous:                       
+        Adresse de contact: {adresse}        
+        Téléphone de contact: {PHONE} 
+        """
+        self.update_recharge()       
+        self.view_card_recharge.setGeometry(0,0,290,170)
+        self.view_card_recharge.setStyleSheet("background-color:#ffffff;border-radius:4px;color:black;")
+        wid_recharge2.setStyleSheet("background-color:#2E2E2E;padding-left:12px;border-radius:4px;")
+        wid_recharge2.setGeometry(305,80,290,170)  
         
         winleft_layout.addWidget(top_pan)
         winleft_layout.addWidget(bottom_pan)
@@ -974,6 +1084,102 @@ class Frame1(QWidget):
         panel_transaction.setStyleSheet("background-color:#2E2E2E;")
         # Remplacer l'ancien widget par le nouveau panel_transaction
         self.replace_widget(self.old_wid, panel_transaction)
+    
+    def generate_recharge(self):
+        self.montn = self.mont.text().replace(" ", "")
+        recharge = self.client_recep.currentText()
+        self.code=self.generate_unique_recharge_code()
+        name,firstname = recharge.split(" ")
+        info = devise_client_account(name,firstname)
+        devise = info["devise"]
+        card = info["card"]
+        
+        self.sold.setText(card)
+        
+        if self.montn.isdigit() and recharge and float(self.montn)>0 and devise is not None:
+            self.update_recharge(mont_=self.montn,code_recharge_=self.code,devise_=devise)
+        else:
+            self.mont.setText("")
+            QMessageBox.warning(self, "Operation Invalid", "montant ou beneficiaire invalid")
+
+    def search_client(self,value):
+        if len(value) == 16:
+            response = info_client(value)  # Ajout de self pour appeler la méthode de la classe
+            if response is None:
+                message = "Client non existant"
+                QMessageBox.warning(self, "Opération invalide",message)
+                self.client_recep.setCurrentText(message)
+            else:
+                name_user=response["name_user"]
+                self.client_recep.setCurrentText(name_user)
+                self.update_recharge(devise_=response["devise"])
+
+    
+        
+        
+    
+    def update_recharge(self,
+                mont_="XXXX",
+                code_recharge_="XXXXXXXXXXXX", 
+                devise_="MAD",
+                adresse_=ADDC,        
+                PHONE_=PHONE):
+        info_fact = self.info_fact.format(
+                code_recharge=code_recharge_,        
+                montant=mont_,
+                devise=devise_,
+                adresse=adresse_,        
+                PHONE=PHONE_)
+        self.view_card_recharge.setText(info_fact)
+    
+    def generate_unique_recharge_code(self, length=16):
+        digits = string.digits
+        recharge_code = ''.join(random.choice(digits) for _ in range(length))
+        return recharge_code
+    
+    def ensure_directory_exists(self,file_path):
+        # Crée le répertoire s'il n'existe pas
+        directory = os.path.dirname(file_path)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+    def print_recharge_card(self):
+        montn = self.mont.text().replace(" ", "")
+        recharge = self.client_recep.currentText()
+        name,firstname = recharge.split(" ")
+        info = devise_client_account(name,firstname)
+        message = create_recharge_card(info["user_id"],self.code,montn,info["card"])
+        # Crée un objet QPrinter configuré pour exporter en PDF
+        printer = QPrinter(QPrinter.HighResolution)
+        printer.setOutputFormat(QPrinter.PdfFormat)
+        date_imp = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")  # Format de date plus sûr pour les fichiers
+        pdf_name = f"recharge_{date_imp}.pdf"
+        # Définissez le chemin où le fichier PDF sera enregistré
+        pdf_path = os.path.join("recharges", f"Aryad_{pdf_name}")
+        # Assurez-vous que le répertoire existe
+        self.ensure_directory_exists(pdf_path)
+        printer.setOutputFileName(pdf_path)
+        # Imprime le contenu du QTextEdit dans le fichier PDF
+        self.view_card_recharge.print_(printer)
+        QMessageBox.information(self, "Information", f"Recharge generée avec succès")
+        # Ouvre le fichier PDF dans le navigateur par défaut
+        webbrowser.open_new(pdf_path)
+    def print_facture(self):
+        # Crée un objet QPrinter configuré pour exporter en PDF
+        printer = QPrinter(QPrinter.HighResolution)
+        printer.setOutputFormat(QPrinter.PdfFormat)
+        date_imp = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")  # Format de date plus sûr pour les fichiers
+        pdf_name = f"facture_{date_imp}.pdf"
+        # Définissez le chemin où le fichier PDF sera enregistré
+        pdf_path = os.path.join("factures", f"Aryad_{pdf_name}")
+        # Assurez-vous que le répertoire existe
+        self.ensure_directory_exists(pdf_path)
+        printer.setOutputFileName(pdf_path)
+        # Imprime le contenu du QTextEdit dans le fichier PDF
+        self.facture_view.print_(printer)
+        QMessageBox.information(self, "Information", f"Facture generée avec succès")
+        # Ouvre le fichier PDF dans le navigateur par défaut
+        webbrowser.open_new(pdf_path)
 
 
     def replace_widget(self,old_wid,new_wid):
@@ -995,7 +1201,7 @@ class Frame1(QWidget):
         
     def declaration(self,code):
         self.titlecomp = QLabel("AryadMoney")
-        self.titlecomp.setStyleSheet("font-size:18px;font:bold;color:qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0#FFB74B,stop:1#32A528)")
+        self.titlecomp.setStyleSheet("font-weight: bold;font-size:18px;color:qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0#FFB74B,stop:1#32A528)")
         
         self.topcentralpan()
         self.centrepan(code)
@@ -1046,7 +1252,8 @@ class Frame1(QWidget):
 
         w3 = QWidget()
         lay_out2 = QHBoxLayout()
-        text_lab = QLabel("Generate Report")
+        text_lab = QLabel("Generer Raport")
+        text_lab.setStyleSheet("color: #ffffff;font-weight: bold;")
         lab_icon = QLabel()
         lab_icon.setPixmap(QPixmap(r"Frames\icons\icon6.png").scaled(16,16))
         lay_out2.addWidget(text_lab)
@@ -1162,7 +1369,7 @@ class Frame1(QWidget):
 
         historique_label = QLabel("Historique des paiements",self.s2)
         historique_label.setGeometry(10,10,300,25)
-        historique_label.setStyleSheet("font-size:18px;font:bold;color:#4BFFB3;")
+        historique_label.setStyleSheet("font-size:18px;font:bold;color:#4BFFB3;font-weight: bold;")
 
         slayout.addWidget(s1)
         slayout.addWidget(self.s2)
@@ -1201,54 +1408,16 @@ class Frame1(QWidget):
 
         s22 = QWidget()
         label_rescent = QLabel("Transactions rescentes",s22)
-        label_rescent.setStyleSheet("font-size:15px;font:bold;color:#4BFFB3;")
+        label_rescent.setStyleSheet("font-size:15px;font:bold;color:#4BFFB3;font-weight: bold;")
         label_rescent.setGeometry(10,10,160,20)
 
-        frame_scroll = QScrollArea(s22)
-        frame_rescent = QWidget()
-        frame_layout = QVBoxLayout()
-        Historiques = get_all_history(self.code_user)
-        deviseA, deviseB = "MAD", "FCFA"
-
-        for elmt in Historiques:
-            # Convertir en objet datetime
-            datetime_obj = elmt["transaction_date"][:10].replace("T"," ")
-            day = str(datetime.now())[:10].replace("T"," ")
-            print(day)
-            print(datetime_obj)
-            if datetime_obj == day:
-                t = QWidget()
-                t_layout = QHBoxLayout()
-                i = QLabel()
-                i.setStyleSheet("background:#2E2E2E;border-radius:15px;")
-                i.setAlignment(Qt.AlignCenter)
-                i.setFixedSize(32, 32)
-
-                j = QLabel()
-                k = QLabel()
-
-                if elmt["transaction_type"] == "envoie":
-                    i.setPixmap(QPixmap(r"Frames\icons\190.png").scaled(20, 20))
-                    j.setText("Envoie")
-                    k.setText(f"+{deviseA} {elmt['transaction_amount']}")
-                elif elmt["transaction_type"] == "retrait":
-                    i.setPixmap(QPixmap(r"Frames\icons\17.png").scaled(20, 20))
-                    j.setText("Retrait")
-                    k.setText(f"-{deviseB} {elmt['transaction_amount']}")
-
-                t_layout.addWidget(i)
-                t_layout.addWidget(j)
-                t_layout.addWidget(k)
-                t.setLayout(t_layout)
-                t.setFixedSize(160, 50)
-                frame_layout.addWidget(t)
-        
-        frame_rescent.setLayout(frame_layout)
-        frame_scroll.setWidget(frame_rescent)
-        frame_scroll.setGeometry(0,30,181,200)
-        frame_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        frame_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        frame_scroll.setWidgetResizable(True)
+        self.frame_scroll = QScrollArea(s22)
+        self.deviseA, self.deviseB = "MAD", "FCFA"
+        self.gethistorescente(self.frame_scroll)
+        self.frame_scroll.setGeometry(0,30,181,200)
+        self.frame_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.frame_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.frame_scroll.setWidgetResizable(True)
         
         s22.setStyleSheet("background-color:#3D3D3D;border-radius:15px;")
         slayout2.addWidget(s12)
@@ -1259,8 +1428,45 @@ class Frame1(QWidget):
         sous_panel_central_central_layout.addWidget(sous_panel_central_central_sous2)
         self.sous_panel_central_central.setLayout(sous_panel_central_central_layout)
 
+    def gethistorescente(self,b):
+        Historiques = get_all_history(self.code_user)
+        if Historiques is not None:
+            frame_rescent = QWidget()
+            frame_layout = QVBoxLayout()
+            for elmt in Historiques:
+                # Convertir en objet datetime
+                datetime_obj = elmt["transaction_date"][:10].replace("T"," ")
+                day = str(datetime.now())[:10].replace("T"," ")
+                if datetime_obj == day:
+                    t = QWidget()
+                    t_layout = QHBoxLayout()
+                    i = QLabel()
+                    i.setStyleSheet("background:#2E2E2E;border-radius:15px;")
+                    i.setAlignment(Qt.AlignCenter)
+                    i.setFixedSize(32, 32)
+
+                    j = QLabel()
+                    k = QLabel()
+
+                    if elmt["transaction_type"] == "envoie":
+                        i.setPixmap(QPixmap(r"Frames\icons\190.png").scaled(20, 20))
+                        j.setText("Envoie")
+                        k.setText(f"+{self.deviseA} {elmt['transaction_amount']}")
+                    elif elmt["transaction_type"] == "retrait":
+                        i.setPixmap(QPixmap(r"Frames\icons\17.png").scaled(20, 20))
+                        j.setText("Retrait")
+                        k.setText(f"-{self.deviseB} {elmt['transaction_amount']}")
+
+                    t_layout.addWidget(i)
+                    t_layout.addWidget(j)
+                    t_layout.addWidget(k)
+                    t.setLayout(t_layout)
+                    t.setFixedSize(160, 50)
+                    frame_layout.addWidget(t)
+            frame_rescent.setLayout(frame_layout)
+            b.setWidget(frame_rescent)
     
-    def clear_layout(layout):
+    def clear_layout(self,layout):
         while layout.count():
             item = layout.takeAt(0)  # Prend l'élément du layout
             widget = item.widget()  # Récupère le widget de l'élément (si c'est un widget)
@@ -1286,8 +1492,9 @@ class Frame1(QWidget):
         
     def refresh(self):
         slide_historique_layout = QVBoxLayout()
+        self.clear_layout(slide_historique_layout)
         Historiques = get_all_history(self.code_user)
-        if Historiques:  # Vérifier si la liste des historiques n'est pas vide
+        if Historiques is not None:  # Vérifier si la liste des historiques n'est pas vide
             for histo in Historiques:
                 h1 = QWidget()
                 icon = QLabel("")
@@ -1330,7 +1537,7 @@ class Frame1(QWidget):
                 h1.setLayout(layout_pan_histo)
                 slide_historique_layout.addWidget(h1)
                 
-            return  slide_historique_layout
+        return  slide_historique_layout
         
         
     
@@ -1448,8 +1655,6 @@ class Frame1(QWidget):
                         client_email = ""
                         client_recepteur = phone_numberR
                         
-                        
-                        
                         self.update_facture(date_=date,emetteur_nom_=emetteur_nom,telephone_emetteur_=telephone_emetteur,
                                         argent_=argent,client_nom_=client_nom,client_recepteur_=client_recepteur)
                 else:
@@ -1494,39 +1699,10 @@ class Frame1(QWidget):
     def chargeHistorique(self):
         Historiques = get_all_history(self.code_user)
         layout = QVBoxLayout()
-        for histo in Historiques:
-            win_orientation = QHBoxLayout()
-            # Créer des QLabel pour chaque champ de l'historique
-            transaction_type = QLabel(histo["transaction_type"])
-            transaction_date = QLabel(histo["transaction_date"][:19].replace("T"," "))
-            transaction_amount = QLabel(str(histo["transaction_amount"]))
-            Emetteur = QLabel(str(histo["sender"]))
-            Recepteur = QLabel(str(histo["receiver"]))
-            frais = QLabel(str(histo["transaction_fee"]))
-            win_orientation.addWidget(transaction_type)
-            win_orientation.addWidget(transaction_date)
-            win_orientation.addWidget(transaction_amount)
-            win_orientation.addWidget(Emetteur)
-            win_orientation.addWidget(Recepteur)
-            win_orientation.addWidget(frais)
-            win = QWidget()
-            win.setLayout(win_orientation)
-            win.setFixedHeight(50)
-            win.setStyleSheet("background:red;margin-bottom:1px;border-radius:0px;")
-            layout.addWidget(win)
-        
-        frame_tab = QWidget()
-        frame_tab.setLayout(layout)
-        return frame_tab
-    
-    
-    def chargeHistorique2(self,vue):
-        Historiques = get_all_history(self.code_user)
-        layout = QVBoxLayout()
-        for histo in Historiques:
-            win_orientation = QHBoxLayout()
-            # Créer des QLabel pour chaque champ de l'historique
-            if histo["transaction_type"]==vue:
+        if Historiques is not None:
+            for histo in Historiques:
+                win_orientation = QHBoxLayout()
+                # Créer des QLabel pour chaque champ de l'historique
                 transaction_type = QLabel(histo["transaction_type"])
                 transaction_date = QLabel(histo["transaction_date"][:19].replace("T"," "))
                 transaction_amount = QLabel(str(histo["transaction_amount"]))
@@ -1545,6 +1721,36 @@ class Frame1(QWidget):
                 win.setStyleSheet("background:red;margin-bottom:1px;border-radius:0px;")
                 layout.addWidget(win)
         
+        frame_tab = QWidget()
+        frame_tab.setLayout(layout)
+        return frame_tab
+    
+    
+    def chargeHistorique2(self,vue):
+        Historiques = get_all_history(self.code_user)
+        layout = QVBoxLayout()
+        if Historiques is not None: 
+            for histo in Historiques:
+                win_orientation = QHBoxLayout()
+                # Créer des QLabel pour chaque champ de l'historique
+                if histo["transaction_type"]==vue:
+                    transaction_type = QLabel(histo["transaction_type"])
+                    transaction_date = QLabel(histo["transaction_date"][:19].replace("T"," "))
+                    transaction_amount = QLabel(str(histo["transaction_amount"]))
+                    Emetteur = QLabel(str(histo["sender"]))
+                    Recepteur = QLabel(str(histo["receiver"]))
+                    frais = QLabel(str(histo["transaction_fee"]))
+                    win_orientation.addWidget(transaction_type)
+                    win_orientation.addWidget(transaction_date)
+                    win_orientation.addWidget(transaction_amount)
+                    win_orientation.addWidget(Emetteur)
+                    win_orientation.addWidget(Recepteur)
+                    win_orientation.addWidget(frais)
+                    win = QWidget()
+                    win.setLayout(win_orientation)
+                    win.setFixedHeight(50)
+                    win.setStyleSheet("background:red;margin-bottom:1px;border-radius:0px;")
+                    layout.addWidget(win)
         frame_tab = QWidget()
         frame_tab.setLayout(layout)
         return frame_tab
