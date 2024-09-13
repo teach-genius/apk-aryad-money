@@ -40,7 +40,15 @@ class Login(QWidget):
 
 
         btn = QPushButton("Login", self.frame_entry)
-        btn.setStyleSheet("background-color:#4BFFB3;color:#3D3D3D;border-radius:10px;font-size:15px;font:bold;")
+        btn.setStyleSheet("""
+                          QPushButton{background-color:#4BFFB3;color:#3D3D3D;border-radius:10px;font-size:15px;font:bold;}
+        
+                QPushButton:pressed 
+            {
+                background-color: #00ee63;
+                border-style: inset;
+            }
+            """)
         btn.setGeometry(20, 400, 360, 40)
         btn.clicked.connect(self.log)
         registre.setOpenExternalLinks(False)

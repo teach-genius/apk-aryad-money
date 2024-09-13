@@ -7,7 +7,7 @@ commandes = {
     "host":"localhost",
     "port":"5432"
 }
-URL_BASE = "http://localhost:8000"
+URL_BASE = "http://localhost:8080"
 # Générer les clés
 # Sérialiser les clés
 # Enregistrer les clés dans des fichiers

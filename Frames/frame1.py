@@ -9,7 +9,6 @@ from operatings import *
 import re
 import secrets
 import string
-import numpy as np
 import random
 from PySide6.QtPrintSupport import *
 import os 
@@ -423,28 +422,52 @@ class Frame1(QWidget):
         iconsc = QIcon(QPixmap(r"Frames\icons\add-friend_2198124.png"))
         saveclient.setIcon(iconsc)
         saveclient.clicked.connect(self.createuser)
-        saveclient.setStyleSheet("background-color:#4BFFB3;border-radius:4px;color:black;font:bold;")
+        saveclient.setStyleSheet("""
+                          QPushButton{background-color:#4BFFB3;color:black;border-radius:4px;font:bold;}
+        
+                QPushButton:pressed 
+            {
+                background-color: #00ee63;
+                border-style: inset;
+            }
+            """)
         saveclient.setGeometry(5,525,150,30)
         
         createcard = QPushButton("Créer compte MAD",vright)
         iconcc = QIcon(QPixmap(r"Frames\icons\business_16576723.png"))
         createcard.setIcon(iconcc)
         createcard.clicked.connect(self.createmadaccount)
-        createcard.setStyleSheet("background-color:#4BFFB3;border-radius:4px;color:black;font:bold;")
+        createcard.setStyleSheet("""
+                          QPushButton{background-color:#4BFFB3;color:black;border-radius:4px;font:bold;}
+        
+                QPushButton:pressed 
+            {
+                background-color: #00ee63;
+                border-style: inset;
+            }
+            """)
         createcard.setGeometry(159,525,150,30)
         
         createcardf = QPushButton("Créer compte FCFA",vright)
         iconcc1 = QIcon(QPixmap(r"Frames\icons\business_16576723.png"))
         createcardf.setIcon(iconcc1)
         createcardf.clicked.connect(self.createfcfaaccount)
-        createcardf.setStyleSheet("background-color:#4BFFB3;border-radius:4px;color:black;font:bold;")
+        createcardf.setStyleSheet("""
+                          QPushButton{background-color:#4BFFB3;color:black;border-radius:4px;font:bold;}
+        
+                QPushButton:pressed 
+            {
+                background-color: #00ee63;
+                border-style: inset;
+            }
+            """)
         createcardf.setGeometry(313,525,150,30)
         
         grdh = QGroupBox("création de compte MAD",vright)
         grdh.setStyleSheet("font-weight: bold;color:#ffffff;")
         self.choix1 = QRadioButton("Actif",grdh)
         choix2 = QRadioButton("Inactif",grdh)
-        choix2.setChecked(True)
+        self.choix1.setChecked(True)
         grdh.setGeometry(10,10,300,150)
         self.choix1.setGeometry(10,20,150,50)
         choix2.setGeometry(80,20,150,50)
@@ -453,7 +476,7 @@ class Frame1(QWidget):
         grfcfa.setStyleSheet("font-weight: bold;color:#ffffff;")
         self.choix1f = QRadioButton("Actif",grfcfa)
         choix2f = QRadioButton("Inactif",grfcfa)
-        choix2f.setChecked(True)
+        self.choix1f.setChecked(True)
         grfcfa.setGeometry(200,10,300,150)
         self.choix1f.setGeometry(10,20,150,50)
         choix2f.setGeometry(80,20,150,50)
@@ -515,7 +538,15 @@ class Frame1(QWidget):
         icop = QIcon(QPixmap(r"Frames\icons\account_4291647.png"))
         savacces.setIcon(icop)
         savacces.clicked.connect(self.create_security_privilege)
-        savacces.setStyleSheet("background-color:#4BFFB3;border-radius:4px;color:black;font:bold;")
+        savacces.setStyleSheet("""
+                          QPushButton{background-color:#4BFFB3;color:black;border-radius:4px;font:bold;}
+        
+                QPushButton:pressed 
+            {
+                background-color: #00ee63;
+                border-style: inset;
+            }
+            """)
         savacces.setGeometry(467,525,150,30)
         
         priv = QLabel("Privilèges utilisateur",sec)
@@ -643,8 +674,10 @@ class Frame1(QWidget):
         password = self.password_sec.text()
         user_type = self.user_type_sec.currentText()
         activation_code = self.activation_code_sec.text()
-        
-        name, firstname = username.split(" ")
+        try:
+            name, firstname = username.split(" ")
+        except:
+            return
         id_user = get_id_user(name, firstname)
         
         status = self.actifac.isChecked()
@@ -723,6 +756,11 @@ class Frame1(QWidget):
         phone = self.balncelft6.text().strip()
         email = self.balncelft7.text().strip()
 
+        tab = ["Maroc", "Gabon"]
+        
+        if(nom=="" or prenom=="" or pays not in tab or phone=="" or  email=="" or cni=="" or ville==""):
+            QMessageBox.information(self,"Information","Renseignez toutes les informations sur l'utilisateur avant enregistrement")
+            return
         # Call create_user function with gathered data
         retour = create_user(nom, prenom, pays, phone, email, cni, ville)
 
@@ -824,31 +862,43 @@ class Frame1(QWidget):
         
         printrecharge = QPushButton("Imprime recharge",one_frame_top)
         printrecharge.clicked.connect(self.print_recharge_card)
-        printrecharge.setStyleSheet("background-color:#4BFFB3;border-radius:4px;color:black;font:bold;")
+        printrecharge.setStyleSheet("""
+                          QPushButton{background-color:#4BFFB3;color:black;border-radius:4px;font:bold;}
+        
+                QPushButton:pressed 
+            {
+                background-color: #00ee63;
+                border-style: inset;
+            }
+            """)
         printrecharge.setIcon(QIcon(QPixmap(r"Frames\icons\printer_8139457.png")))
         printrecharge.setGeometry(12,220,148,30)
         
-        userexist = QComboBox(three_frame_top)
-        userexist.setPlaceholderText("Recepteur")
-        userexist.setStyleSheet("background-color:#2E2E2E;border-radius:4px;font-weight: bold;color:#ffffff;")
-        userexist.setGeometry(12,65,148,30)
-        self.getallusers(userexist)
+        self.userexist = QComboBox(three_frame_top)
+        self.userexist.setPlaceholderText("Recepteur")
+        self.userexist.setStyleSheet("background-color:#2E2E2E;border-radius:4px;font-weight: bold;color:#ffffff;")
+        self.userexist.setGeometry(12,65,148,30)
+        self.getallusers(self.userexist)
         
         userexist2 = QLineEdit(three_frame_top)
         userexist2.setPlaceholderText("Recherche Em. par ID")
         userexist2.setStyleSheet("border-radius:4px;padding-left:12px;font-weight: bold;color:#ffffff;")
         userexist2.setGeometry(12,100,148,30)
+        
             
         searcheuser_by_id = QLineEdit(three_frame_top)
         searcheuser_by_id.setGeometry(12,30,148,30)
         searcheuser_by_id.setPlaceholderText("Recherche Re. par ID")
         searcheuser_by_id.setStyleSheet("border-radius:4px;font:bold;padding-left;")
         
-        userexist3 = QComboBox(three_frame_top)
-        userexist3.setPlaceholderText("Emetteur")
-        userexist3.setStyleSheet("background-color:#2E2E2E;border-radius:4px;font-weight: bold;color:#ffffff;")
-        userexist3.setGeometry(12,135,148,30)
-        self.getallusers(userexist3)
+        self.userexist3 = QComboBox(three_frame_top)
+        self.userexist3.setPlaceholderText("Emetteur")
+        self.userexist3.setStyleSheet("background-color:#2E2E2E;border-radius:4px;font-weight: bold;color:#ffffff;")
+        self.userexist3.setGeometry(12,135,148,30)
+        self.getallusers(self.userexist3)
+        
+        searcheuser_by_id.textChanged.connect(self.search_clientB)
+        userexist2.textChanged.connect(self.search_clientC)
         
         # Créer le QGroupBox pour contenir les boutons radio
         groupRadio2 = QGroupBox("Status Frais Transaction/AM",three_frame_top)
@@ -866,7 +916,15 @@ class Frame1(QWidget):
         
         printFACTURE = QPushButton("Imprime Facture",three_frame_top)
         printFACTURE.clicked.connect(self.print_facture)
-        printFACTURE.setStyleSheet("background-color:#4BFFB3;border-radius:4px;color:black;font:bold;")
+        printFACTURE.setStyleSheet("""
+                          QPushButton{background-color:#4BFFB3;color:black;border-radius:4px;font:bold;}
+        
+                QPushButton:pressed 
+            {
+                background-color: #00ee63;
+                border-style: inset;
+            }
+            """)
         printFACTURE.setIcon(QIcon(QPixmap(r"Frames\icons\printer_8139457.png")))
         printFACTURE.setGeometry(12,220,148,30)
         
@@ -927,7 +985,15 @@ class Frame1(QWidget):
         valide_transaction.setIcon(QIcon(QPixmap(r"Frames\icons\calculator_7133722.png")))
         valide_transaction.setFixedHeight(30)
         valide_transaction.clicked.connect(self.clicked_genereted_facture)
-        valide_transaction.setStyleSheet("background-color:#4BFFB3;border-radius:4px;color:black;font:bold;")
+        valide_transaction.setStyleSheet("""
+                          QPushButton{background-color:#4BFFB3;color:black;border-radius:4px;font:bold;}
+        
+                QPushButton:pressed 
+            {
+                background-color: #00ee63;
+                border-style: inset;
+            }
+            """)
         
         
         two_frame_top_layout.addWidget(client_emetteur)
@@ -989,7 +1055,7 @@ class Frame1(QWidget):
         self.client_recep.setStyleSheet("background-color:#3D3D3D;font-weight: bold;")
         self.client_recep.setGeometry(10,90,270,30)
         self.getallusers(self.client_recep)
-        self.sold.textChanged.connect(self.search_client)
+        self.sold.textChanged.connect(self.search_clientA)
         
         self.montlab = QLabel("Montant:",wid_recharge)
         self.montlab.setStyleSheet("color: #ffffff;font-weight: bold;")
@@ -1003,7 +1069,16 @@ class Frame1(QWidget):
         gen_card.clicked.connect(self.generate_recharge)
         gen_card.setIcon(QIcon(QPixmap(r"Frames\icons\credit-card_6296460.png")))
         gen_card.setGeometry(10,135,130,30)
-        gen_card.setStyleSheet("background-color:#4BFFB3;border-radius:4px;color:black;font:bold;")
+        gen_card.setStyleSheet(
+                               """
+                          QPushButton{background-color:#4BFFB3;color:black;border-radius:4px;font:bold;}
+        
+                QPushButton:pressed 
+            {
+                background-color: #00ee63;
+                border-style: inset;
+            }
+            """)
         
 
         
@@ -1102,7 +1177,7 @@ class Frame1(QWidget):
             self.mont.setText("")
             QMessageBox.warning(self, "Operation Invalid", "montant ou beneficiaire invalid")
 
-    def search_client(self,value):
+    def search_clientA(self,value):
         if len(value) == 16:
             response = info_client(value)  # Ajout de self pour appeler la méthode de la classe
             if response is None:
@@ -1115,8 +1190,29 @@ class Frame1(QWidget):
                 self.update_recharge(devise_=response["devise"])
 
     
+    def search_clientC(self,value):
+        if len(value) == 16:
+            response = info_client(value)  # Ajout de self pour appeler la méthode de la classe
+            if response is None:
+                message = "Client non existant"
+                QMessageBox.warning(self, "Opération invalide",message)
+                self.userexist3.setCurrentText(message)
+            else:
+                name_user=response["name_user"]
+                self.userexist3.setCurrentText(name_user)
+                self.update_recharge(devise_=response["devise"])
         
-        
+    def search_clientB(self,value):
+        if len(value) == 16:
+            response = info_client(value)  # Ajout de self pour appeler la méthode de la classe
+            if response is None:
+                message = "Client non existant"
+                QMessageBox.warning(self, "Opération invalide",message)
+                self.userexist.setCurrentText(message)
+            else:
+                name_user=response["name_user"]
+                self.userexist.setCurrentText(name_user)
+                self.update_recharge(devise_=response["devise"])
     
     def update_recharge(self,
                 mont_="XXXX",
@@ -1639,24 +1735,24 @@ class Frame1(QWidget):
                         phone_numberR = f"{indiceR.strip()} {phone_numberR.strip()}"
                         nameR = nameR.strip()
                         devise = "MAD" if indiceE.strip()=="+212" else "FCFA"
-                        
+                        solde = self.solde.text().strip()
                         numero_facture=""
                         date= str(datetime.now())
                         emetteur_nom= nameE
                         emetteur_adresse=""
                         emetteur_recepteur=""
                         telephone_emetteur=phone_numberE
-                        argent= self.solde.text().strip()+" "+devise
-                        frais_argent=""
-                        total_argent=""
-                        net_recu = ""
+                        argent= solde+" "+devise
+                        frais_argent= str(round(float(solde)*0.1))+" "+devise
+                        total_argent=str(round((float(solde)+round(float(solde)*0.1))))+" "+devise
+                        net_recu = str(round(float(solde)*60))+" "+"FCFA" if devise=="MAD" else str(round(float(solde)/60))+" "+"MAD"
                         client_nom = nameR
                         client_adresse = ""
                         client_email = ""
                         client_recepteur = phone_numberR
                         
-                        self.update_facture(date_=date,emetteur_nom_=emetteur_nom,telephone_emetteur_=telephone_emetteur,
-                                        argent_=argent,client_nom_=client_nom,client_recepteur_=client_recepteur)
+                        self.update_facture(date_=date,total_argent_=total_argent,frais_argent_=frais_argent,emetteur_nom_=emetteur_nom,telephone_emetteur_=telephone_emetteur,
+                                        argent_=argent,client_nom_=client_nom,client_recepteur_=client_recepteur,net_recu_=net_recu)
                 else:
                     self.show_message("Echec","Remplissez correctement les champs suivant le format")
         else:
