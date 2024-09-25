@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QComboBox, QPushB
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 from pageEmail import FrameEmail
-
+from resource_path import resource_path
 class FrameName(QWidget):
     def __init__(self,parent) -> None:
         super().__init__()

@@ -3,6 +3,7 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from registre_email import RegistreEmail
 from frame1 import Frame1
+from resource_path import resource_path
 from settings import commandes,URL_BASE
 from operatings import login
 
@@ -76,7 +77,7 @@ class Login(QWidget):
 
         logo = QLabel(self.frame_entry)
         ico = QLabel(logo)
-        ico.setPixmap(QPixmap(r"icons/16.png").scaled(40,40))
+        ico.setPixmap(QPixmap(resource_path('icons/16.png')).scaled(40,40))
         ico.setStyleSheet("background:transparent;padding-top:8px;padding-left:7px;padding-top:9px;")
 
         logo.setFixedSize(50, 50)
@@ -114,9 +115,6 @@ class Login(QWidget):
                    self.show_message("ERROR","Echec de connection") 
             else:
                 self.show_message("ERROR","Remplissez tous les champs")
-
-
-
 
     def on_link_clicked(self):
         f = RegistreEmail(self.parent)
