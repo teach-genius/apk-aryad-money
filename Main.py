@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QApplication, QMainWindow
-from Frames.login import Login
+from login import Login
 from settings import commandes
 
 #page de connexion
@@ -18,4 +18,3 @@ if __name__ == "__main__":
     window = Connexion()
     window.show()
     app.exec()
-  

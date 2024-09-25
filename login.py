@@ -1,8 +1,8 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
-from Frames.registre_email import RegistreEmail
-from Frames.frame1 import Frame1
+from registre_email import RegistreEmail
+from frame1 import Frame1
 from settings import commandes,URL_BASE
 from operatings import login
 
@@ -76,7 +76,7 @@ class Login(QWidget):
 
         logo = QLabel(self.frame_entry)
         ico = QLabel(logo)
-        ico.setPixmap(QPixmap(r"Frames\icons\16.png").scaled(40,40))
+        ico.setPixmap(QPixmap(r"icons/16.png").scaled(40,40))
         ico.setStyleSheet("background:transparent;padding-top:8px;padding-left:7px;padding-top:9px;")
 
         logo.setFixedSize(50, 50)

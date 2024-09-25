@@ -1,11 +1,9 @@
-from PySide6.QtWidgets import *
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from Frames.password import FramePassWord
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QComboBox, QPushButton, QLabel
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QPixmap
+from pageEmail import FrameEmail
 
-
-
-class FrameEmail(QWidget):
+class FrameName(QWidget):
     def __init__(self,parent) -> None:
         super().__init__()
         self.parent = parent
@@ -20,32 +18,29 @@ class FrameEmail(QWidget):
         self.barre()
         self.message()
         self.setFixedSize(1200, 600)
-
-
-    def entry(self):
         
+       
+   
+  
+    def entry(self):
         l1 = QLineEdit(self.frame_entry)
-        l1.setPlaceholderText("Numéro de telephone")
+        l1.setPlaceholderText("Veuillez entrer votre nom ")
         l1.setStyleSheet("background-color:#545454;border-radius:10px;padding:12px;")
         l1.setGeometry(20, 205, 360, 40)
 
         l2 = QLineEdit(self.frame_entry)
-        l2.setPlaceholderText("Pays/Ville")
+        l2.setPlaceholderText("Veuillez entrer votre prenom")
         l2.setStyleSheet("background-color:#545454;border-radius:10px;padding:12px;")
         l2.setGeometry(20, 265, 360, 40)
 
-        
         l3 = QLineEdit(self.frame_entry)
-        l3.setPlaceholderText("Date de naissance")
-        l3.setStyleSheet("background-color:#545454;border-radius:10px;padding:12px;")
+        l3.setPlaceholderText("Veuillez entrer votre CNI")
+        l3.setStyleSheet("background-color:#545454;border-radius:10px;padding:12px;color:#D9D9D9;")
         l3.setGeometry(20, 325, 360, 40)
 
         btn = QPushButton("Suivant", self.frame_entry)
         btn.setStyleSheet("background-color:#4BFFB3;color:#3D3D3D;border-radius:10px;font-size:15px;font:bold;")
         btn.setGeometry(20, 400, 360, 40)
-        fo = QLabel("Format: DD/MM/AAAA",self.frame_entry)
-        fo.setStyleSheet("color:#D9D9D9;font-size:8px")
-        fo.setGeometry(20,365,300,20)
         btn.clicked.connect(self.log)
     
     def barre(self):
@@ -89,8 +84,8 @@ class FrameEmail(QWidget):
         vue.setStyleSheet("background-color:#3D3D3D;")
 
     def log(self):
-        f = FramePassWord(self.parent)
+        f = FrameEmail(self.parent)
         self.parent.setframe(f)
         print("pressed btn")
-        
+
 
