@@ -4,7 +4,7 @@ from PySide6.QtGui import *
 from registre_email import RegistreEmail
 from frame1 import Frame1
 from resource_path import resource_path
-from settings import commandes,URL_BASE
+from settings import commandes
 from operatings import login
 
 class Login(QWidget):

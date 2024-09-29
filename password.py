@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
-from resource_path import resource_path
+
 
 class FramePassWord(QWidget):
     def __init__(self,parent) -> None:

@@ -1,5 +1,5 @@
 commandes = {
-    "main_window_title":"AryadMoney Software",
+    "main_window_title":"AryadManager",
     "name_companie":"AryadMoney",
     "password_db":"uF4Xf^WQm(Yzm@ZXvJrh4NGw3g2GRQ",
     "db_name":"aryadmoney",
@@ -17,4 +17,4 @@ AG_AM="ES2A018"
 
 ADDC = "Fès/Maroc"
 PHONE = "+212 0774975404"
-EMAIL = "aryadacademie@gmail.com"
+EMAIL = "aryadmoneycontact@gmail.com"

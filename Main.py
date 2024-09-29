@@ -1,4 +1,5 @@
 from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtGui import QPixmap,QIcon
 from login import Login
 from settings import commandes
 
@@ -9,6 +10,7 @@ class Connexion(QMainWindow):
         self.central_widget = Login(self)
         self.setFixedSize(1200, 600)
         self.setWindowTitle(str(commandes["main_window_title"]))
+        self.setWindowIcon(QIcon(QPixmap("icons/16.png")))
         self.setframe(self.central_widget)
     def setframe(self, fen):
         self.setCentralWidget(fen)
